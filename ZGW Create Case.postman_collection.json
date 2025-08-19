@@ -1,0 +1,1460 @@
+{
+	"info": {
+		"_postman_id": "082c6b09-05d2-47e5-a574-ba8114523049",
+		"name": "ZGW Create Case",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30715320",
+		"_collection_link": "https://warped-escape-52217.postman.co/workspace/Oneground-ZGW-Api's~e2659d20-12f8-4e5f-8fb4-80a0a29f0b3b/collection/30715320-082c6b09-05d2-47e5-a574-ba8114523049?action=share&source=collection_link&creator=30715320"
+	},
+	"item": [
+		{
+			"name": "PREP token",
+			"item": [
+				{
+					"name": "Set zgw-token",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"    \r",
+									"     var secretCurrentOrg = pm.environment.get(\"secret\");\r",
+									"     var client_idCurrentOrg =  pm.environment.get(\"clientID\");\r",
+									"     var tokenuser = pm.environment.get(\"clientID\");\r",
+									"    console.info(secretCurrentOrg,\"\",client_idCurrentOrg,\"\",tokenuser) \r",
+									"     \r",
+									"    function base64url(source) {\r",
+									"        // Encode in classical base64\r",
+									"        encodedSource = CryptoJS.enc.Base64.stringify(source);\r",
+									"    \r",
+									"        // Remove padding equal characters\r",
+									"        encodedSource = encodedSource.replace(/=+$/, '');\r",
+									"    \r",
+									"        // Replace characters according to base64url specifications\r",
+									"        encodedSource = encodedSource.replace(/\\+/g, '-');\r",
+									"        encodedSource = encodedSource.replace(/\\//g, '_');\r",
+									"    \r",
+									"        return encodedSource;\r",
+									"    }\r",
+									"    \r",
+									"    function addIAT(request) {\r",
+									"        var iat = Math.floor(Date.now() / 1000) + 257;\r",
+									"        data.iat = iat;\r",
+									"        data.exp = iat + 10000000;\r",
+									"        return data;\r",
+									"    }\r",
+									"    \r",
+									"    var header = {\r",
+									"        \"typ\": \"JWT\",\r",
+									"        \"alg\": \"HS256\"\r",
+									"    };\r",
+									"    \r",
+									"    var data = {\r",
+									"        \"iss\": client_idCurrentOrg,\r",
+									"        \"client_id\": client_idCurrentOrg,\r",
+									"        \"user_id\": tokenuser,\r",
+									"        \"user_representation\": client_idCurrentOrg,\r",
+									"        \"jti\": \"35b9d0e0-8c80-4aef-9c9c-55d6e34eff40\"\r",
+									"    };\r",
+									"    data = addIAT(data);\r",
+									"    \r",
+									"    var secret = secretCurrentOrg;\r",
+									"    \r",
+									"    // encode header\r",
+									"    var stringifiedHeader = CryptoJS.enc.Utf8.parse(JSON.stringify(header));\r",
+									"    var encodedHeader = base64url(stringifiedHeader);\r",
+									"    \r",
+									"    // encode data\r",
+									"    var stringifiedData = CryptoJS.enc.Utf8.parse(JSON.stringify(data));\r",
+									"    var encodedData = base64url(stringifiedData);\r",
+									"    \r",
+									"    // build token\r",
+									"    var token = encodedHeader + \".\" + encodedData;\r",
+									"    \r",
+									"    var signature = CryptoJS.HmacSHA256(token, secret);\r",
+									"    signature = base64url(signature);\r",
+									"    \r",
+									"    var signedToken = token + \".\" + signature;\r",
+									"    \r",
+									"    pm.environment.set(\"jwt_token\", signedToken);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Prep 1\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ztc_url}}/zaaktypen",
+							"host": [
+								"{{ztc_url}}"
+							],
+							"path": [
+								"zaaktypen"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Casetype",
+			"item": [
+				{
+					"name": "catalogus",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if(pm.response.code == 201) {\r",
+									"    pm.environment.set(\"catalogus_url\", pm.response.json().url);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"timestamp\", new Date().getTime());"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"domein\": \"ABC\",\r\n    \"rsin\": \"000001375\",\r\n    \"contactpersoonBeheerNaam\": \"Johannes\",\r\n    \"contactpersoonBeheerTelefoonnummer\": \"0610395351\",\r\n    \"contactpersoonBeheerEmailadres\": \"johannes.battjes@roxit.nl\",\r\n    \"naam\": \"De testcatalogus\",\r\n    \"versie\": \"1\",\r\n    \"begindatumVersie\": \"2024-03-24\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ztc_url}}/catalogussen",
+							"host": [
+								"{{ztc_url}}"
+							],
+							"path": [
+								"catalogussen"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "informatieobjecttype",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code==201) {\r",
+									"    pm.environment.set(\"informatieobjecttype\", pm.response.json().url);\r",
+									"    pm.environment.set(\"informatieobjecttype_omschrijving\", pm.response.json().omschrijving);\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const moment = require('moment');\r",
+									"pm.environment.set(\"beginGeldigheid\",moment().format((\"YYYY-MM-DD\")));\r",
+									"pm.environment.set(\"eindeGeldigheid\", moment().add(1,'day').format((\"YYYY-MM-DD\")));\r",
+									"pm.environment.set(\"timestamp\", new Date().getTime());"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"catalogus\": \"{{catalogus_url}}\",\r\n    \"omschrijving\": \"I{{timestamp}}\",\r\n    \"vertrouwelijkheidaanduiding\": \"openbaar\",\r\n    \"beginGeldigheid\": \"{{beginGeldigheid}}\",\r\n    \"eindeGeldigheid\": \"{{eindeGeldigheid}}\",\r\n    \"beginObject\": \"{{beginGeldigheid}}\",\r\n    \"eindeObject\": \"{{eindeGeldigheid}}\",\r\n    \"versiedatum\": \"{{beginGeldigheid}}\",\r\n    \"informatieobjectcategorie\": \"string IOC\",\r\n    \"trefwoord\": [\r\n        \"trefwoord1\",\r\n        \"trefwoord2\"\r\n    ],\r\n    \"omschrijvingGeneriek\": {\r\n        \"informatieobjecttypeOmschrijvingGeneriek\": \"iotgen\",\r\n        \"definitieInformatieobjecttypeOmschrijvingGeneriek\": \"iotdef\",\r\n        \"herkomstInformatieobjecttypeOmschrijvingGeneriek\": \"iother\",\r\n        \"hierarchieInformatieobjecttypeOmschrijvingGeneriek\": \"iothier\",\r\n        \"opmerkingInformatieobjecttypeOmschrijvingGeneriek\": \"iotopm\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ztc_url}}/informatieobjecttypen",
+							"host": [
+								"{{ztc_url}}"
+							],
+							"path": [
+								"informatieobjecttypen"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "publish informatieobjecttype",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{informatieobjecttype}}/publish",
+							"host": [
+								"{{informatieobjecttype}}"
+							],
+							"path": [
+								"publish"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "besluittype",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"if (pm.response.code == 201){\r",
+									"    pm.environment.set(\"besluittype\", pm.response.json().url);\r",
+									"    pm.environment.set(\"besluittype_omschrijving\", pm.response.json().omschrijving);\r",
+									"    }\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"timestamp\", new Date().getTime());"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"catalogus\": \"{{catalogus_url}}\",\r\n    \"omschrijving\": \"O{{timestamp}}\",\r\n    \"omschrijvingGeneriek\": \"string\",\r\n    \"besluitcategorie\": \"string\",\r\n    \"reactietermijn\": \"P7D\",\r\n    \"publicatieIndicatie\": true,\r\n    \"publicatietekst\": \"string\",\r\n    \"publicatietermijn\": \"P8D\",\r\n    \"toelichting\": \"string\",\r\n    \"informatieobjecttypen\": [\r\n\r\n    ],\r\n        \"zaaktypen\": [\r\n\r\n    ],\r\n    \"beginGeldigheid\": \"{{beginGeldigheid}}\",\r\n    \"eindeGeldigheid\": \"{{eindeGeldigheid}}\",\r\n    \"beginObject\": \"{{beginGeldigheid}}\",\r\n    \"eindeObject\": \"{{eindeGeldigheid}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ztc_url}}/besluittypen",
+							"host": [
+								"{{ztc_url}}"
+							],
+							"path": [
+								"besluittypen"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "publiceer besluittype",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{besluittype}}/publish",
+							"host": [
+								"{{besluittype}}"
+							],
+							"path": [
+								"publish"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "zaaktype",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code==201){\r",
+									"    pm.environment.set(\"zaaktype\", pm.response.json().url);\r",
+									"    }\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const moment = require('moment');\r",
+									"pm.environment.set(\"beginGeldigheid\",moment().format((\"YYYY-MM-DD\")));\r",
+									"pm.environment.set(\"eindeGeldigheid\", moment().add(1,'day').format((\"YYYY-MM-DD\")));\r",
+									"pm.environment.set(\"timestamp\", new Date().getTime());\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"identificatie\": \"P{{timestamp}}\",\r\n    \"omschrijving\": \"Een testgevalzaak\",\r\n    \"omschrijvingGeneriek\": \"Generieke omschrijviing\",\r\n    \"vertrouwelijkheidaanduiding\": \"openbaar\",\r\n    \"doel\": \"iets\",\r\n    \"aanleiding\": \"iets anders\",\r\n    \"toelichting\": \"nog iets\",\r\n    \"indicatieInternOfExtern\": \"intern\",\r\n    \"handelingInitiator\": \"Iemand deed iets\",\r\n    \"onderwerp\": \"ergens over\",\r\n    \"handelingBehandelaar\": \"iemand\",\r\n    \"doorlooptijd\": \"P2D\",\r\n    \"servicenorm\": \"P3D\",\r\n    \"opschortingEnAanhoudingMogelijk\": true,\r\n    \"verlengingMogelijk\": true,\r\n    \"verlengingstermijn\": \"P4D\",\r\n    \"trefwoorden\": [\r\n        \"string\"\r\n    ],\r\n    \"publicatieIndicatie\": true,\r\n    \"publicatietekst\": \"string\",\r\n    \"verantwoordingsrelatie\": [\r\n        \"string\"\r\n    ],\r\n    \"productenOfDiensten\": [],\r\n    \"selectielijstProcestype\": \"https://referentielijsten.roxit.nl/api/v1/procestypen/7ff2b005-4d84-47fe-983a-732bfa958ff5\",\r\n    \"referentieproces\": {\r\n        \"naam\": \"string\",\r\n        \"link\": \"http://example.com\"\r\n    },\r\n    \"verantwoordelijke\": \"string\",\r\n    \"broncatalogus\": {\r\n        \"url\": \"{{catalogus_url}}\",\r\n        \"domein\": \"strin\",\r\n        \"rsin\": \"{{rsin}}\"\r\n    },\r\n    \"bronzaaktype\": {\r\n        \"url\": \"http://example.com\",\r\n        \"identificatie\": \"string\",\r\n        \"omschrijving\": \"string\"\r\n    },\r\n    \"catalogus\": \"{{catalogus_url}}\",\r\n    \"besluittypen\": [\r\n        \"{{besluittype_omschrijving}}\"\r\n    ],\r\n    \"deelzaaktypen\": [],\r\n    \"gerelateerdeZaaktypen\": [],\r\n    \"beginGeldigheid\": \"{{beginGeldigheid}}\",\r\n    \"eindeGeldigheid\": \"{{eindeGeldigheid}}\",\r\n    \"beginObject\": \"{{beginGeldigheid}}\",\r\n    \"eindeObject\": \"{{eindeGeldigheid}}\",\r\n    \"versiedatum\": \"{{beginGeldigheid}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ztc_url}}/zaaktypen",
+							"host": [
+								"{{ztc_url}}"
+							],
+							"path": [
+								"zaaktypen"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "zaaktype-informatieobjecttype",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"zaaktypeinformatieobjecttype\", pm.response.json().url);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"zaaktype\": \"{{zaaktype}}\",\r\n    \"informatieobjecttype\": \"{{informatieobjecttype_omschrijving}}\",\r\n    \"volgnummer\": 1,\r\n    \"richting\": \"inkomend\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ztc_url}}/zaaktype-informatieobjecttypen",
+							"host": [
+								"{{ztc_url}}"
+							],
+							"path": [
+								"zaaktype-informatieobjecttypen"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "eigenschap",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code==201){\r",
+									"    pm.environment.set(\"eigenschap1\", pm.response.json().url);\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"naam\": \"O{{timestamp}}\",\r\n    \"definitie\": \"string\",\r\n    \"specificatie\": {\r\n        \"groep\": \"string\",\r\n        \"formaat\": \"tekst\",\r\n        \"lengte\": \"string\",\r\n        \"kardinaliteit\": \"123\"\r\n    },\r\n    \"toelichting\": \"string\",\r\n    \"zaaktype\": \"{{zaaktype}}\",\r\n\r\n    \"beginGeldigheid\": \"{{beginGeldigheid}}\",\r\n    \"eindeGeldigheid\": \"{{eindeGeldigheid}}\",\r\n    \"beginObject\": \"{{beginGeldigheid}}\",\r\n    \"eindeObject\": \"{{eindeGeldigheid}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ztc_url}}/eigenschappen",
+							"host": [
+								"{{ztc_url}}"
+							],
+							"path": [
+								"eigenschappen"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "statustype start",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"startstatustype\", pm.response.json().url);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"omschrijving\": \"O{{timestamp}}\",\r\n    \"omschrijvingGeneriek\": \"string\",\r\n    \"statustekst\": \"dit is de status\",\r\n    \"zaaktype\": \"{{zaaktype}}\",\r\n    \"volgnummer\": 10,\r\n    \"informeren\": true,\r\n    \"doorlooptijd\": \"P12D\",\r\n    \"toelichting\": \"dit is de toelichting    \",\r\n    \"checklistitemStatustype\": [\r\n        {\r\n            \"itemnaam\": \"string\",\r\n            \"toelichting\": \"string\",\r\n            \"vraagstelling\": \"string\",\r\n            \"verplicht\": true\r\n        },\r\n        {\r\n            \"itemnaam\": \"string2\",\r\n            \"toelichting\": \"string2\",\r\n            \"vraagstelling\": \"string2\",\r\n            \"verplicht\": false\r\n        }\r\n    ],\r\n    \"eigenschappen\": [\r\n\r\n    ],\r\n    \"beginGeldigheid\": \"{{beginGeldigheid}}\",\r\n    \"eindeGeldigheid\": \"{{eindeGeldigheid}}\",\r\n    \"beginObject\": \"{{beginGeldigheid}}\",\r\n    \"eindeObject\": \"{{eindeGeldigheid}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ztc_url}}/statustypen",
+							"host": [
+								"{{ztc_url}}"
+							],
+							"path": [
+								"statustypen"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "statustype end",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"eindstatustype\", pm.response.json().url);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"omschrijving\": \"O{{timestamp}}\",\r\n    \"omschrijvingGeneriek\": \"string\",\r\n    \"statustekst\": \"dit is de status\",\r\n    \"zaaktype\": \"{{zaaktype}}\",\r\n    \"volgnummer\": 20,\r\n    \"informeren\": true,\r\n    \"doorlooptijd\": \"P12D\",\r\n    \"toelichting\": \"dit iis de toelichting    \",\r\n    \"checklistitemStatustype\": [\r\n        {\r\n            \"itemnaam\": \"string\",\r\n            \"toelichting\": \"string\",\r\n            \"vraagstelling\": \"string\",\r\n            \"verplicht\": true\r\n        },\r\n        {\r\n            \"itemnaam\": \"string2\",\r\n            \"toelichting\": \"string2\",\r\n            \"vraagstelling\": \"string2\",\r\n            \"verplicht\": false\r\n        }\r\n    ],\r\n    \"eigenschappen\": [],\r\n    \"beginGeldigheid\": \"{{beginGeldigheid}}\",\r\n    \"eindeGeldigheid\": \"{{eindeGeldigheid}}\",\r\n    \"beginObject\": \"{{beginGeldigheid}}\",\r\n    \"eindeObject\": \"{{eindeGeldigheid}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ztc_url}}/statustypen",
+							"host": [
+								"{{ztc_url}}"
+							],
+							"path": [
+								"statustypen"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "resultaattype",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code==201){\r",
+									"    pm.environment.set(\"resultaattype\", pm.response.json().url);\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"omschrijving\": \"O{{timestamp}}\",\r\n    \"resultaattypeomschrijving\": \"https://referentielijsten.roxit.nl/api/v1/resultaattypeomschrijvingen/2f6e52c7-968f-4aa9-beee-d6b31365e981\",\r\n    \"selectielijstklasse\": \"https://referentielijsten.roxit.nl/api/v1/resultaten/2e86a8ca-0269-446c-8da2-6f4d08be422d\",\r\n    \"zaaktype\": \"{{zaaktype}}\",\r\n    \"toelichting\": \"Toelichting\",\r\n    \"archiefnominatie\": \"vernietigen\",\r\n    \"archiefactietermijn\": \"P1Y\",\r\n    \"brondatumArchiefprocedure\": {\r\n        \"afleidingswijze\": \"afgehandeld\",\r\n        \"datumkenmerk\": \"\",\r\n        \"einddatumBekend\": false,\r\n        \"objecttype\": null,\r\n        \"registratie\": \"\",\r\n        \"procestermijn\": null\r\n    },\r\n    \"besluittypen\": [],\r\n    \"beginGeldigheid\": \"{{beginGeldigheid}}\",\r\n    \"eindeGeldigheid\": \"{{eindeGeldigheid}}\",\r\n    \"beginObject\": \"{{beginGeldigheid}}\",\r\n    \"eindeObject\": \"{{eindeGeldigheid}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ztc_url}}/resultaattypen",
+							"host": [
+								"{{ztc_url}}"
+							],
+							"path": [
+								"resultaattypen"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "roltype",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code==201){\r",
+									"        pm.environment.set(\"roltype\", pm.response.json().url);\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"zaaktype\": \"{{zaaktype}}\",\r\n    \"omschrijving\": \"O{{timestamp}}\",\r\n    \"omschrijvingGeneriek\": \"initiator\",\r\n\r\n\r\n    \"beginGeldigheid\": \"{{beginGeldigheid}}\",\r\n    \"eindeGeldigheid\": \"{{eindeGeldigheid}}\",\r\n    \"beginObject\": \"{{beginGeldigheid}}\",\r\n    \"eindeObject\": \"{{eindeGeldigheid}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ztc_url}}/roltypen",
+							"host": [
+								"{{ztc_url}}"
+							],
+							"path": [
+								"roltypen"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "publish zaaktype",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{zaaktype}}/publish",
+							"host": [
+								"{{zaaktype}}"
+							],
+							"path": [
+								"publish"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Case",
+			"item": [
+				{
+					"name": "zaak",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"zaak_url\", pm.response.json().url);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Proxy-Authorization",
+								"value": "",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Crs",
+								"value": "EPSG:4326"
+							},
+							{
+								"key": "Content-Crs",
+								"value": "EPSG:4326"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"bronorganisatie\": \"{{rsin}}\",\r\n    \"omschrijving\": \"Postman test \",\r\n    \"toelichting\": \"geen toelichting\",\r\n    \"zaaktype\": \"{{zaaktype}}\",\r\n    \"registratiedatum\": \"2023-07-19\",\r\n    \"verantwoordelijkeOrganisatie\": \"{{rsin}}\",\r\n    \"startdatum\": \"2023-07-19\",\r\n    \"einddatumGepland\": null,\r\n    \"uiterlijkeEinddatumAfdoening\": \"2029-08-24\",\r\n    \"publicatiedatum\": \"2029-08-25\",\r\n    \"communicatiekanaal\": \"https://referentielijsten.roxit.nl/api/v1/communicatiekanalen/2b757868-45c2-42ca-b637-b63ddc87beb4\",\r\n    \"productenOfDiensten\": [\r\n\r\n    ],\r\n    \"vertrouwelijkheidaanduiding\": \"openbaar\",\r\n    \"betalingsindicatie\": \"geheel\",\r\n    \"laatsteBetaaldatum\": \"2019-08-24\",\r\n    \"zaakgeometrie\": {\r\n        \"type\": \"Point\",\r\n        \"coordinates\": [\r\n            51.0,\r\n            4.8\r\n        ]\r\n    },\r\n    \"verlenging\": {\r\n        \"reden\": \"het duurt te kort\",\r\n        \"duur\": \"P12D\"\r\n    },\r\n    \"opschorting\": {\r\n        \"indicatie\": true,\r\n        \"reden\": \"het is niet af\"\r\n    },\r\n    \"selectielijstklasse\": \"https://referentielijsten.roxit.nl/api/v1/resultaten/02157de3-c22c-44a0-94b1-8044edf93da8\",\r\n    \"relevanteAndereZaken\": [\r\n\r\n    ],\r\n    \"kenmerken\": [\r\n        {\r\n            \"kenmerk\": \"123\",\r\n            \"bron\": \"DSO\"\r\n        },\r\n        {\r\n            \"kenmerk\": \"456\",\r\n            \"bron\": \"OLO\"\r\n        }\r\n    ],\r\n    \"archiefnominatie\": null,\r\n    \"archiefstatus\": \"nog_te_archiveren\",\r\n    \"archiefactiedatum\": null,\r\n\r\n    \"opdrachtgevendeOrganisatie\": \"123443210\",\r\n    \"processobjectaard\": null,\r\n    \"startdatumBewaartermijn\": null,\r\n    \"processobject\": null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{zrc_url}}/zaken",
+							"host": [
+								"{{zrc_url}}"
+							],
+							"path": [
+								"zaken"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "start status",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Proxy-Authorization",
+								"value": "",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Crs",
+								"value": "EPSG:4326"
+							},
+							{
+								"key": "Content-Crs",
+								"value": "EPSG:4326"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"zaak\": \"{{zaak_url}}\",\r\n    \"statustype\": \"{{startstatustype}}\",\r\n    \"datumStatusGezet\": \"2023-12-22T10:44:47.5000576Z\",\r\n    \"statusToelichting\": \"Faseovergang naar Registreerbaarheid toetsen - status: Geaccepteerd\",\r\n    \"gezetdoor\": \"https://deburgermeester.van.eengemeente.nl\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{zrc_url}}/statussen",
+							"host": [
+								"{{zrc_url}}"
+							],
+							"path": [
+								"statussen"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "eigenschap",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Proxy-Authorization",
+								"value": "",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Crs",
+								"value": "EPSG:4326"
+							},
+							{
+								"key": "Content-Crs",
+								"value": "EPSG:4326"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"zaak\": \"{{zaak_url}}\",\r\n    \"eigenschap\": \"{{eigenschap1}}\",\r\n    \"waarde\": \"12\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{zaak_url}}/zaakeigenschappen",
+							"host": [
+								"{{zaak_url}}"
+							],
+							"path": [
+								"zaakeigenschappen"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "rol NP",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Proxy-Authorization",
+								"value": "",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Crs",
+								"value": "EPSG:4326"
+							},
+							{
+								"key": "Content-Crs",
+								"value": "EPSG:4326"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"zaak\": \"{{zaak_url}}\",\r\n    \"betrokkene\": \"http://example.com\",\r\n    \"betrokkeneType\": \"natuurlijk_persoon\",\r\n    \"afwijkendeNaamBetrokkene\": \"string\",\r\n    \"roltype\": \"{{roltype}}\",\r\n    \"roltoelichting\": \"string\",\r\n    \"indicatieMachtiging\": \"gemachtigde\",\r\n    \"contactpersoonRol\": {\r\n        \"emailadres\": \"user@example.com\",\r\n        \"functie\": \"string\",\r\n        \"telefoonnummer\": \"string\",\r\n        \"naam\": \"string\"\r\n    },\r\n    \"betrokkeneIdentificatie\": {\r\n        \"inpBsn\": \"{{inpBsn}}\",\r\n        \"anpIdentificatie\": \"{{anpIdentificatie}}\",\r\n        \"inpA_nummer\": \"{{inpA_nummer}}\",\r\n        \"achternaam\": \"string\",\r\n        \"voorletters\": \"string\",\r\n        \"voorvoegselAchternaam\": \"string\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{zrc_url}}/rollen",
+							"host": [
+								"{{zrc_url}}"
+							],
+							"path": [
+								"rollen"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "rol NNP",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Proxy-Authorization",
+								"value": "",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Crs",
+								"value": "EPSG:4326"
+							},
+							{
+								"key": "Content-Crs",
+								"value": "EPSG:4326"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"zaak\": \"{{zaak_url}}\",\r\n    \"betrokkene\": \"http://example.com\",\r\n    \"betrokkeneType\": \"niet_natuurlijk_persoon\",\r\n    \"afwijkendeNaamBetrokkene\": \"string\",\r\n    \"roltype\": \"{{roltype}}\",\r\n    \"roltoelichting\": \"string\",\r\n    \"indicatieMachtiging\": \"gemachtigde\",\r\n    \"contactpersoonRol\": {\r\n        \"emailadres\": \"user@example.com\",\r\n        \"functie\": \"string\",\r\n        \"telefoonnummer\": \"string\",\r\n        \"naam\": \"string\"\r\n    },\r\n    \"betrokkeneIdentificatie\": {\r\n        \"innNnpId\": \"{{innNnpId}}\",\r\n        \"annIdentificatie\": \"{{annIdentificatie}}\",\r\n        \"statutaireNaam\": \"string\",\r\n        \"innRechtsvorm\": \"besloten_vennootschap\",\r\n        \"bezoekadres\": \"string\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{zrc_url}}/rollen",
+							"host": [
+								"{{zrc_url}}"
+							],
+							"path": [
+								"rollen"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "rol VES",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Proxy-Authorization",
+								"value": "",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Crs",
+								"value": "EPSG:4326"
+							},
+							{
+								"key": "Content-Crs",
+								"value": "EPSG:4326"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"zaak\": \"{{zaak_url}}\",\r\n    \"betrokkene\": \"http://example.com\",\r\n    \"betrokkeneType\": \"vestiging\",\r\n    \"afwijkendeNaamBetrokkene\": \"deze naam wijkt af\",\r\n    \"roltype\": \"{{roltype}}\",\r\n    \"roltoelichting\": \"string\",\r\n    \"indicatieMachtiging\": \"gemachtigde\",\r\n    \"contactpersoonRol\": {\r\n        \"emailadres\": \"cp@example.com\",\r\n        \"functie\": \"fundtie cp\",\r\n        \"telefoonnummer\": \"123\",\r\n        \"naam\": \"naam cp\"\r\n    },\r\n    \"betrokkeneIdentificatie\": {\r\n        \"vestigingsNummer\": \"{{vestigingsNummer}}\",\r\n        \"handelsnaam\": [\"eerste bedrijfsnaam\", \"tweede bedrijfsnaam\"],\r\n\r\n        \"kvkNummer\": \"{{kvkNummer}}\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{zrc_url}}/rollen",
+							"host": [
+								"{{zrc_url}}"
+							],
+							"path": [
+								"rollen"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "rol MDW",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Proxy-Authorization",
+								"value": "",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Crs",
+								"value": "EPSG:4326"
+							},
+							{
+								"key": "Content-Crs",
+								"value": "EPSG:4326"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"zaak\": \"{{zaak_url}}\",\r\n    \"betrokkene\": \"http://example.com\",\r\n    \"betrokkeneType\": \"medewerker\",\r\n    \"afwijkendeNaamBetrokkene\": \"string\",\r\n    \"roltype\": \"{{roltype}}\",\r\n    \"roltoelichting\": \"string\",\r\n    \"indicatieMachtiging\": \"gemachtigde\",\r\n    \"contactpersoonRol\": {\r\n        \"emailadres\": \"user@example.com\",\r\n        \"functie\": \"string\",\r\n        \"telefoonnummer\": \"string\",\r\n        \"naam\": \"string\"\r\n    },\r\n    \"betrokkeneIdentificatie\": {\r\n        \"identificatie\": \"{{MDWidentificatie}}\",\r\n        \"achternaam\": \"string\",\r\n        \"voorletters\": \"string\",\r\n        \"voorvoegselAchternaam\": \"string\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{zrc_url}}/rollen",
+							"host": [
+								"{{zrc_url}}"
+							],
+							"path": [
+								"rollen"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "rol OEH",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Proxy-Authorization",
+								"value": "",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Crs",
+								"value": "EPSG:4326"
+							},
+							{
+								"key": "Content-Crs",
+								"value": "EPSG:4326"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"zaak\": \"{{zaak_url}}\",\r\n    \"betrokkene\": \"http://example.com\",\r\n    \"betrokkeneType\": \"organisatorische_eenheid\",\r\n    \"afwijkendeNaamBetrokkene\": \"string\",\r\n    \"roltype\": \"{{roltype}}\",\r\n    \"roltoelichting\": \"string\",\r\n    \"indicatieMachtiging\": \"gemachtigde\",\r\n    \"contactpersoonRol\": {\r\n        \"emailadres\": \"user@example.com\",\r\n        \"functie\": \"string\",\r\n        \"telefoonnummer\": \"string\",\r\n        \"naam\": \"string\"\r\n    },\r\n    \"betrokkeneIdentificatie\": {\r\n        \"identificatie\": \"{{OEHidentifiicatie}}\",\r\n        \"naam\": \"string\",\r\n        \"isGehuisvestIn\": \"string\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{zrc_url}}/rollen",
+							"host": [
+								"{{zrc_url}}"
+							],
+							"path": [
+								"rollen"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "object globale locatie",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Crs",
+								"value": "EPSG:4326"
+							},
+							{
+								"key": "Accept-Crs",
+								"value": "EPSG:4326"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"zaak\": \"{{zaak_url}}\",\n\"object\": \"\",\n\"objectType\": \"overige\",\n\"objectTypeOverige\": \"GlobaleLocatie\",\n\"objectTypeOverigeDefinitie\": null,\n\"relatieomschrijving\": \"heeft betrekking op\",\n\"objectIdentificatie\": {\n    \"overigeData\": \"ergens anders\"\n    }\n}"
+						},
+						"url": {
+							"raw": "{{zrc_url}}/zaakobjecten",
+							"host": [
+								"{{zrc_url}}"
+							],
+							"path": [
+								"zaakobjecten"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "besluit",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"verantwoordelijkeOrganisatie\": \"{{rsin}}\",\r\n    \"besluittype\": \"{{besluittype}}\",\r\n    \"zaak\": \"{{zaak_url}}\",\r\n    \r\n    \"datum\": \"2019-08-24\",\r\n    \"toelichting\": \"string\",\r\n    \"bestuursorgaan\": \"string\",\r\n    \"ingangsdatum\": \"2019-08-24\",\r\n    \"vervaldatum\": \"2019-08-24\",\r\n    \"vervalreden\": \"tijdelijk\",\r\n    \"publicatiedatum\": \"2019-08-24\",\r\n    \"verzenddatum\": \"2019-08-24\",\r\n    \"uiterlijkeReactiedatum\": \"2019-08-24\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{brc_url}}/besluiten",
+							"host": [
+								"{{brc_url}}"
+							],
+							"path": [
+								"besluiten"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "enkelvoudiginformatieobject",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"document_url\", pm.response.json().url);\r",
+									"pm.environment.set(\"document_identificatie\", pm.response.json().identificatie);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"identificatie\": \"\",\r\n    \"bronorganisatie\": \"000001375\",\r\n    \"creatiedatum\": \"2023-07-13\",\r\n    \"titel\": \"test 3\",\r\n    \"vertrouwelijkheidaanduiding\": \"openbaar\",\r\n    \"auteur\": \"Gemeente DSO-Roxit\",\r\n    \"status\": \"definitief\",\r\n    \"formaat\": \"application/pdf\",\r\n    \"taal\": \"nld\",\r\n    \"status\": \"gearchiveerd\",\r\n    \"bestandsnaam\": \"test 3.pdf\",\r\n    \"inhoud\": \"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b29yIE1pY3Jvc29mdCAzNjU8L3htcDpDcmVhdG9yVG9vbD48eG1wOkNyZWF0ZURhdGU+MjAyMS0wNy0wN1QwODoyNDoyNCswMjowMDwveG1wOkNyZWF0ZURhdGU+PHhtcDpNb2RpZnlEYXRlPjIwMjEtMDctMDdUMDg6MjQ6MjQrMDI6MDA8L3htcDpNb2RpZnlEYXRlPjwvcmRmOkRlc2NyaXB0aW9uPgo8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiAgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iPgo8eG1wTU06RG9jdW1lbnRJRD51dWlkOkU1NUYxN0QxLUEwRjAtNEUxQy04NjlDLTUyNzNENTNDQzhDQjwveG1wTU06RG9jdW1lbnRJRD48eG1wTU06SW5zdGFuY2VJRD51dWlkOkU1NUYxN0QxLUEwRjAtNEUxQy04NjlDLTUyNzNENTNDQzhDQjwveG1wTU06SW5zdGFuY2VJRD48L3JkZjpEZXNjcmlwdGlvbj4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCjwvcmRmOlJERj48L3g6eG1wbWV0YT48P3hwYWNrZXQgZW5kPSJ3Ij8+DQplbmRzdHJlYW0NCmVuZG9iag0KMjEgMCBvYmoNCjw8L0Rpc3BsYXlEb2NUaXRsZSB0cnVlPj4NCmVuZG9iag0KMjIgMCBvYmoNCjw8L1R5cGUvWFJlZi9TaXplIDIyL1dbIDEgNCAyXSAvUm9vdCAxIDAgUi9JbmZvIDkgMCBSL0lEWzxEMTE3NUZFNUYwQTAxQzRFODY5QzUyNzNENTNDQzhDQj48RDExNzVGRTVGMEEwMUM0RTg2OUM1MjczRDUzQ0M4Q0I+XSAvRmlsdGVyL0ZsYXRlRGVjb2RlL0xlbmd0aCA4Nz4+DQpzdHJlYW0NCnicY2AAgv//GYGkIAMDiFoGoe6BKcY3YIrZAELdAFMsxyHUHzDFasjAwATWzgShmCEUC4RihVCMEAqqkg2oj80PrJ39Fpji2AmmSl6AqcZABgYABDoMXA0KZW5kc3RyZWFtDQplbmRvYmoNCnhyZWYNCjAgMjMNCjAwMDAwMDAwMTAgNjU1MzUgZg0KMDAwMDAwMDAxNyAwMDAwMCBuDQowMDAwMDAwMTY2IDAwMDAwIG4NCjAwMDAwMDAyMjIgMDAwMDAgbg0KMDAwMDAwMDQ5MiAwMDAwMCBuDQowMDAwMDAwODE2IDAwMDAwIG4NCjAwMDAwMDA5ODQgMDAwMDAgbg0KMDAwMDAwMTIyMyAwMDAwMCBuDQowMDAwMDAxMjc2IDAwMDAwIG4NCjAwMDAwMDEzMjkgMDAwMDAgbg0KMDAwMDAwMDAxMSA2NTUzNSBmDQowMDAwMDAwMDEyIDY1NTM1IGYNCjAwMDAwMDAwMTMgNjU1MzUgZg0KMDAwMDAwMDAxNCA2NTUzNSBmDQowMDAwMDAwMDE1IDY1NTM1IGYNCjAwMDAwMDAwMTYgNjU1MzUgZg0KMDAwMDAwMDAxNyA2NTUzNSBmDQowMDAwMDAwMDAwIDY1NTM1IGYNCjAwMDAwMDIwMTAgMDAwMDAgbg0KMDAwMDAwMjIzMyAwMDAwMCBuDQowMDAwMDI5OTI4IDAwMDAwIG4NCjAwMDAwMzMxMDUgMDAwMDAgbg0KMDAwMDAzMzE1MCAwMDAwMCBuDQp0cmFpbGVyDQo8PC9TaXplIDIzL1Jvb3QgMSAwIFIvSW5mbyA5IDAgUi9JRFs8RDExNzVGRTVGMEEwMUM0RTg2OUM1MjczRDUzQ0M4Q0I+PEQxMTc1RkU1RjBBMDFDNEU4NjlDNTI3M0Q1M0NDOENCPl0gPj4NCnN0YXJ0eHJlZg0KMzM0MzYNCiUlRU9GDQp4cmVmDQowIDANCnRyYWlsZXINCjw8L1NpemUgMjMvUm9vdCAxIDAgUi9JbmZvIDkgMCBSL0lEWzxEMTE3NUZFNUYwQTAxQzRFODY5QzUyNzNENTNDQzhDQj48RDExNzVGRTVGMEEwMUM0RTg2OUM1MjczRDUzQ0M4Q0I+XSAvUHJldiAzMzQzNi9YUmVmU3RtIDMzMTUwPj4NCnN0YXJ0eHJlZg0KMzQwNTINCiUlRU9G\",\r\n    \"bestandsomvang\": 34230,\r\n    \"link\": \"\",\r\n    \"beschrijving\": \"\",\r\n    \"ontvangstdatum\": null,\r\n    \"verzenddatum\": null,\r\n    \"indicatieGebruiksrecht\": false,\r\n    \"ondertekening\": null,\r\n    \"integriteit\": null,\r\n    \"informatieobjecttype\": \"{{informatieobjecttype}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{drc_url}}/enkelvoudiginformatieobjecten",
+							"host": [
+								"{{drc_url}}"
+							],
+							"path": [
+								"enkelvoudiginformatieobjecten"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "zaakinformatieobject",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"informatieobject\": \"{{document_url}}\",\r\n    \"zaak\": \"{{zaak_url}}\",\r\n    \"titel\": \"postmantitel\",\r\n    \"beschrijving\": \"postmanbeschrijving\",\r\n    \"vernietigingsdatum\": \"2023-02-08T16:26:43Z\",\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{zrc_url}}/zaakinformatieobjecten",
+							"host": [
+								"{{zrc_url}}"
+							],
+							"path": [
+								"zaakinformatieobjecten"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "resultaat",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Proxy-Authorization",
+								"value": "",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Crs",
+								"value": "EPSG:4326"
+							},
+							{
+								"key": "Content-Crs",
+								"value": "EPSG:4326"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"zaak\": \"{{zaak_url}}\",\r\n    \"resultaattype\": \"{{resultaattype}}\",\r\n    \"toelichting\": \"toelichting uit Postman\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{zrc_url}}/resultaten",
+							"host": [
+								"{{zrc_url}}"
+							],
+							"path": [
+								"resultaten"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "eindstatus",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Proxy-Authorization",
+								"value": "",
+								"disabled": true
+							},
+							{
+								"key": "Accept-Crs",
+								"value": "EPSG:4326"
+							},
+							{
+								"key": "Content-Crs",
+								"value": "EPSG:4326"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"zaak\": \"{{zaak_url}}\",\r\n    \"statustype\": \"{{eindstatustype}}\",\r\n    \"datumStatusGezet\": \"2025-07-22T10:44:47.5000576Z\",\r\n    \"statusToelichting\": \"Faseovergang naar Registreerbaarheid toetsen - status: Geaccepteerd\",\r\n    \"gezetdoor\": \"https://deburgermeester.van.eengemeente.nl\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{zrc_url}}/statussen",
+							"host": [
+								"{{zrc_url}}"
+							],
+							"path": [
+								"statussen"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{jwt_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
