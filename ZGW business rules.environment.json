@@ -196,7 +196,7 @@
 		},
 		{
 			"key": "zaaktype_vertrouwelijkheid",
-			"value": "",
+			"value": "openbaar",
 			"type": "any",
 			"enabled": true
 		},
@@ -676,7 +676,7 @@
 		},
 		{
 			"key": "expliciete_vertrouwelijkheid",
-			"value": "",
+			"value": "vertrouwelijk",
 			"type": "any",
 			"enabled": true
 		},
@@ -934,13 +934,13 @@
 		},
 		{
 			"key": "expliciete_vertrouwelijkheidaanduiding",
-			"value": "",
+			"value": "zeer_geheim",
 			"type": "any",
 			"enabled": true
 		},
 		{
 			"key": "informatieobjecttype_vertrouwelijkheidaanduiding",
-			"value": "",
+			"value": "openbaar",
 			"type": "any",
 			"enabled": true
 		},
@@ -1071,6 +1071,12 @@
 			"enabled": true
 		},
 		{
+			"key": "ServiceAccount-token",
+			"value": "",
+			"type": "any",
+			"enabled": true
+		},
+		{
 			"key": "created_objectinformatieobject_url",
 			"value": "",
 			"type": "any",
@@ -1096,6 +1102,6 @@
 		}
 	],
 	"_postman_variable_scope": "environment",
-	"_postman_exported_at": "2025-08-19T15:22:54.423Z",
-	"_postman_exported_using": "Postman/11.59.1"
+	"_postman_exported_at": "2025-11-19T12:51:48.018Z",
+	"_postman_exported_using": "Postman/11.72.3"
 }
