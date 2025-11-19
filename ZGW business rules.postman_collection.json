@@ -1,10 +1,10 @@
 {
 	"info": {
-		"_postman_id": "26b734a9-1505-485c-a196-037e375da680",
+		"_postman_id": "ae8d69af-46eb-45fd-ac52-ad8ea2d633c2",
 		"name": "ZGW business rules",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "30715320",
-		"_collection_link": "https://warped-escape-52217.postman.co/workspace/Oneground-ZGW-Api's~e2659d20-12f8-4e5f-8fb4-80a0a29f0b3b/collection/30715320-26b734a9-1505-485c-a196-037e375da680?action=share&source=collection_link&creator=30715320"
+		"_collection_link": "https://warped-escape-52217.postman.co/workspace/Oneground-ZGW-Api's~e2659d20-12f8-4e5f-8fb4-80a0a29f0b3b/collection/30715320-ae8d69af-46eb-45fd-ac52-ad8ea2d633c2?action=share&source=collection_link&creator=30715320"
 	},
 	"item": [
 		{
@@ -3708,12 +3708,14 @@
 									"listen": "test",
 									"script": {
 										"exec": [
+											"setTimeout(() => {}, 1000); ",
 											"if(pm.response.code == 201) {",
 											"    pm.environment.set(\"created_zaakinformatieobject_url\", pm.response.json().url);",
 											"}"
 										],
 										"type": "text/javascript",
-										"packages": {}
+										"packages": {},
+										"requests": {}
 									}
 								}
 							],
@@ -17722,9 +17724,12 @@
 									"listen": "test",
 									"script": {
 										"exec": [
+											"setTimeout(() => {}, 1000); \r",
 											"pm.environment.set(\"created_zaakinformatieobject_url\", pm.response.json().url);"
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
 									}
 								}
 							],
@@ -18568,10 +18573,11 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											""
+											"setTimeout(() => {}, 1000); "
 										],
 										"type": "text/javascript",
-										"packages": {}
+										"packages": {},
+										"requests": {}
 									}
 								}
 							],
@@ -19810,12 +19816,14 @@
 									"listen": "test",
 									"script": {
 										"exec": [
+											"setTimeout(() => {}, 1000); ",
 											"if(pm.response.code == 201) {",
 											"    pm.environment.set(\"created_zaakinformatieobject_url\", pm.response.json().url);",
 											"}"
 										],
 										"type": "text/javascript",
-										"packages": {}
+										"packages": {},
+										"requests": {}
 									}
 								}
 							],
@@ -19844,7 +19852,7 @@
 							"response": []
 						},
 						{
-							"name": "(zrc-005a) ZaakInformatieObject aanmaken maakt ObjectInformatieObject aan met objectType zaak",
+							"name": "(drc-00xa) ZaakInformatieObject aanmaken maakt ObjectInformatieObject aan met objectType zaak",
 							"event": [
 								{
 									"listen": "test",
@@ -19936,7 +19944,7 @@
 							"response": []
 						},
 						{
-							"name": "(zrc-005a) ZaakInformatieObject aanmaken maakt ObjectInformatieObject aan met objectType zaak Copy",
+							"name": "(drc-00xb) ZaakInformatieObject aanmaken maakt ObjectInformatieObject aan met objectType zaak restricted",
 							"event": [
 								{
 									"listen": "test",
@@ -21828,10 +21836,12 @@
 									"listen": "test",
 									"script": {
 										"exec": [
+											"setTimeout(() => {}, 1000); \r",
 											"pm.environment.set(\"created_besluitinformatieobject_url\", pm.response.json().url);"
 										],
 										"type": "text/javascript",
-										"packages": {}
+										"packages": {},
+										"requests": {}
 									}
 								}
 							],
@@ -23070,17 +23080,20 @@
 											""
 										],
 										"type": "text/javascript",
-										"packages": {}
+										"packages": {},
+										"requests": {}
 									}
 								},
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
+											"setTimeout(() => {}, 1000); \r",
 											"pm.environment.set(\"besluitinformatieobject_url\", pm.response.json().url);"
 										],
 										"type": "text/javascript",
-										"packages": {}
+										"packages": {},
+										"requests": {}
 									}
 								}
 							],
