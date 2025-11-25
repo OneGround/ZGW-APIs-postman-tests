@@ -3708,6 +3708,7 @@
 									"listen": "test",
 									"script": {
 										"exec": [
+											"setTimeout(() => {}, 1000); ",
 											"if(pm.response.code == 201) {",
 											"    pm.environment.set(\"created_zaakinformatieobject_url\", pm.response.json().url);",
 											"}"
@@ -17723,6 +17724,7 @@
 									"listen": "test",
 									"script": {
 										"exec": [
+											"setTimeout(() => {}, 1000); \r",
 											"pm.environment.set(\"created_zaakinformatieobject_url\", pm.response.json().url);"
 										],
 										"type": "text/javascript",
@@ -18571,7 +18573,7 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											""
+											"setTimeout(() => {}, 1000); "
 										],
 										"type": "text/javascript",
 										"packages": {},
@@ -19814,6 +19816,7 @@
 									"listen": "test",
 									"script": {
 										"exec": [
+											"setTimeout(() => {}, 1000); ",
 											"if(pm.response.code == 201) {",
 											"    pm.environment.set(\"created_zaakinformatieobject_url\", pm.response.json().url);",
 											"}"
@@ -21833,6 +21836,7 @@
 									"listen": "test",
 									"script": {
 										"exec": [
+											"setTimeout(() => {}, 1000); \r",
 											"pm.environment.set(\"created_besluitinformatieobject_url\", pm.response.json().url);"
 										],
 										"type": "text/javascript",
@@ -23084,6 +23088,7 @@
 									"listen": "test",
 									"script": {
 										"exec": [
+											"setTimeout(() => {}, 1000); \r",
 											"pm.environment.set(\"besluitinformatieobject_url\", pm.response.json().url);"
 										],
 										"type": "text/javascript",
