@@ -5,61 +5,73 @@
 		{
 			"key": "zrc_url",
 			"value": "https://zaken.oneground.local/api/v1",
+			"type": "default",
 			"enabled": true
 		},
 		{
 			"key": "drc_url",
 			"value": "https://documenten-services.dev.local/api/v1",
+			"type": "default",
 			"enabled": true
 		},
 		{
 			"key": "ztc_url",
 			"value": "https://catalogi-services.dev.local/api/v1",
+			"type": "default",
 			"enabled": true
 		},
 		{
 			"key": "brc_url",
 			"value": "https://besluiten-services.dev.local/api/v1",
+			"type": "default",
 			"enabled": true
 		},
 		{
 			"key": "nrc_url",
 			"value": "https://notificaties-services.dev.local/api/v1",
+			"type": "default",
 			"enabled": true
 		},
 		{
 			"key": "ac_url",
 			"value": "https://autorisaties-services.dev.local/api/v1",
+			"type": "default",
 			"enabled": true
 		},
 		{
 			"key": "referentielijst_url",
 			"value": "https://referentielijsten.roxit.nl/api/v1",
+			"type": "default",
 			"enabled": true
 		},
 		{
 			"key": "mock_url",
 			"value": "https://c9ac80e5-f4f6-46f9-9e64-a164c03b5f25.mock.pstmn.io",
+			"type": "default",
 			"enabled": true
 		},
 		{
 			"key": "client_id",
 			"value": "postman-000000000",
+			"type": "default",
 			"enabled": true
 		},
 		{
 			"key": "secret",
 			"value": "",
+			"type": "default",
 			"enabled": true
 		},
 		{
 			"key": "client_id_limited",
 			"value": "postman-limited-000000000",
+			"type": "default",
 			"enabled": true
 		},
 		{
 			"key": "secret_limited",
 			"value": "",
+			"type": "default",
 			"enabled": true
 		},
 		{
@@ -196,7 +208,7 @@
 		},
 		{
 			"key": "zaaktype_vertrouwelijkheid",
-			"value": "",
+			"value": "openbaar",
 			"type": "any",
 			"enabled": true
 		},
@@ -340,13 +352,13 @@
 		},
 		{
 			"key": "resultaat_waardering",
-			"value": "",
+			"value": "vernietigen",
 			"type": "any",
 			"enabled": true
 		},
 		{
 			"key": "resultaat_bewaartermijn",
-			"value": "",
+			"value": "P10Y",
 			"type": "any",
 			"enabled": true
 		},
@@ -430,7 +442,7 @@
 		},
 		{
 			"key": "informatieobjecttype_omschrijvingziot",
-			"value": "",
+			"value": "publish test",
 			"type": "any",
 			"enabled": true
 		},
@@ -496,7 +508,7 @@
 		},
 		{
 			"key": "deelzaaktype_omschrijving",
-			"value": "",
+			"value": "zrc_tests_1 deelzaaktype",
 			"type": "any",
 			"enabled": true
 		},
@@ -676,7 +688,7 @@
 		},
 		{
 			"key": "expliciete_vertrouwelijkheid",
-			"value": "",
+			"value": "vertrouwelijk",
 			"type": "any",
 			"enabled": true
 		},
@@ -934,13 +946,13 @@
 		},
 		{
 			"key": "expliciete_vertrouwelijkheidaanduiding",
-			"value": "",
+			"value": "zeer_geheim",
 			"type": "any",
 			"enabled": true
 		},
 		{
 			"key": "informatieobjecttype_vertrouwelijkheidaanduiding",
-			"value": "",
+			"value": "openbaar",
 			"type": "any",
 			"enabled": true
 		},
@@ -1071,6 +1083,12 @@
 			"enabled": true
 		},
 		{
+			"key": "ServiceAccount-token",
+			"value": "",
+			"type": "any",
+			"enabled": true
+		},
+		{
 			"key": "created_objectinformatieobject_url",
 			"value": "",
 			"type": "any",
@@ -1095,7 +1113,8 @@
 			"enabled": true
 		}
 	],
+	"color": null,
 	"_postman_variable_scope": "environment",
-	"_postman_exported_at": "2025-08-19T15:22:54.423Z",
-	"_postman_exported_using": "Postman/11.59.1"
+	"_postman_exported_at": "2025-11-25T10:43:39.091Z",
+	"_postman_exported_using": "Postman/11.73.0"
 }
