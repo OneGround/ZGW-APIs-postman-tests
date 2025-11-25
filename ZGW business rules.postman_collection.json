@@ -1,10 +1,10 @@
 {
 	"info": {
-		"_postman_id": "ae8d69af-46eb-45fd-ac52-ad8ea2d633c2",
+		"_postman_id": "ddb9fb77-c66b-4d12-82c7-b8abc1a5a584",
 		"name": "ZGW business rules",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "30715320",
-		"_collection_link": "https://warped-escape-52217.postman.co/workspace/Oneground-ZGW-Api's~e2659d20-12f8-4e5f-8fb4-80a0a29f0b3b/collection/30715320-ae8d69af-46eb-45fd-ac52-ad8ea2d633c2?action=share&source=collection_link&creator=30715320"
+		"_collection_link": "https://warped-escape-52217.postman.co/workspace/Oneground-ZGW-Api's~e2659d20-12f8-4e5f-8fb4-80a0a29f0b3b/collection/30715320-ddb9fb77-c66b-4d12-82c7-b8abc1a5a584?action=share&source=collection_link&creator=30715320"
 	},
 	"item": [
 		{
@@ -517,24 +517,6 @@
 								}
 							},
 							"response": []
-						},
-						{
-							"name": "Delete created Applicatie",
-							"request": {
-								"method": "DELETE",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "{{applicatie_url}}",
-									"host": [
-										"{{applicatie_url}}"
-									]
-								}
-							},
-							"response": []
 						}
 					]
 				},
@@ -767,35 +749,6 @@
 							"response": []
 						},
 						{
-							"name": "Delete Applicatie",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.environment.unset(\"created_applicatie_url\");"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "DELETE",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "{{created_applicatie_url}}",
-									"host": [
-										"{{created_applicatie_url}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
 							"name": "(ac-003c) Autorisatie met component drc scope m.b.t. documenten en zonder maxVertrouwelijkheidaanduiding en informatieobjecttype is onmogelijk",
 							"event": [
 								{
@@ -905,35 +858,6 @@
 							"response": []
 						},
 						{
-							"name": "Delete Applicatie",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.environment.unset(\"created_applicatie_url\");"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "DELETE",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "{{created_applicatie_url}}",
-									"host": [
-										"{{created_applicatie_url}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
 							"name": "(ac-003f) Autorisatie met component brc zonder scope m.b.t. besluiten en zonder besluittype is mogelijk",
 							"event": [
 								{
@@ -985,35 +909,6 @@
 									],
 									"path": [
 										"applicaties"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete Applicatie",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.environment.unset(\"created_applicatie_url\");"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "DELETE",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "{{created_applicatie_url}}",
-									"host": [
-										"{{created_applicatie_url}}"
 									]
 								}
 							},
