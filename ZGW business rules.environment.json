@@ -1114,7 +1114,7 @@
 		},
 		{
 			"key": "timeout_before_notification_check",
-			"value": "2000",
+			"value": "20000",
 			"type": "default",
 			"enabled": true
 		}
