@@ -1,10 +1,10 @@
 {
 	"info": {
-		"_postman_id": "ddb9fb77-c66b-4d12-82c7-b8abc1a5a584",
+		"_postman_id": "4e19c4e7-f9c5-40d6-a737-9044219fe1ec",
 		"name": "ZGW business rules",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "30715320",
-		"_collection_link": "https://warped-escape-52217.postman.co/workspace/Oneground-ZGW-Api's~e2659d20-12f8-4e5f-8fb4-80a0a29f0b3b/collection/30715320-ddb9fb77-c66b-4d12-82c7-b8abc1a5a584?action=share&source=collection_link&creator=30715320"
+		"_collection_link": "https://warped-escape-52217.postman.co/workspace/Oneground-ZGW-Api's~e2659d20-12f8-4e5f-8fb4-80a0a29f0b3b/collection/30715320-4e19c4e7-f9c5-40d6-a737-9044219fe1ec?action=share&source=collection_link&creator=30715320"
 	},
 	"item": [
 		{
@@ -3603,7 +3603,7 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"setTimeout(() => {}, 1000); ",
+											"setTimeout(() => {}, pm.environment.get(\"timeout_before_notification_check\"));",
 											"if(pm.response.code == 201) {",
 											"    pm.environment.set(\"created_zaakinformatieobject_url\", pm.response.json().url);",
 											"}"
@@ -3692,6 +3692,30 @@
 						},
 						{
 							"name": "Delete ZaakInformatieObject",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"setTimeout(() => {}, pm.environment.get(\"timeout_before_notification_check\"));"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
 							"request": {
 								"method": "DELETE",
 								"header": [],
@@ -16095,9 +16119,12 @@
 									"listen": "test",
 									"script": {
 										"exec": [
+											"setTimeout(() => {}, pm.environment.get(\"timeout_before_notification_check\"));\r",
 											"pm.environment.set(\"created_zaakinformatieobject_url\", pm.response.json().url);"
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
 									}
 								},
 								{
@@ -16106,7 +16133,9 @@
 										"exec": [
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
 									}
 								}
 							],
@@ -17619,7 +17648,7 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"setTimeout(() => {}, 1000); \r",
+											"setTimeout(() => {}, pm.environment.get(\"timeout_before_notification_check\")); \r",
 											"pm.environment.set(\"created_zaakinformatieobject_url\", pm.response.json().url);"
 										],
 										"type": "text/javascript",
@@ -18468,7 +18497,7 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"setTimeout(() => {}, 1000); "
+											"setTimeout(() => {}, pm.environment.get(\"timeout_before_notification_check\"));"
 										],
 										"type": "text/javascript",
 										"packages": {},
@@ -19711,7 +19740,7 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"setTimeout(() => {}, 1000); ",
+											"setTimeout(() => {}, pm.environment.get(\"timeout_before_notification_check\"));",
 											"if(pm.response.code == 201) {",
 											"    pm.environment.set(\"created_zaakinformatieobject_url\", pm.response.json().url);",
 											"}"
@@ -21731,7 +21760,7 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"setTimeout(() => {}, 1000); \r",
+											"setTimeout(() => {}, pm.environment.get(\"timeout_before_notification_check\"));\r",
 											"pm.environment.set(\"created_besluitinformatieobject_url\", pm.response.json().url);"
 										],
 										"type": "text/javascript",
@@ -22983,7 +23012,7 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"setTimeout(() => {}, 1000); \r",
+											"setTimeout(() => {}, pm.environment.get(\"timeout_before_notification_check\"));\r",
 											"pm.environment.set(\"besluitinformatieobject_url\", pm.response.json().url);"
 										],
 										"type": "text/javascript",
