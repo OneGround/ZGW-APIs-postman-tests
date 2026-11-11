@@ -19157,6 +19157,132 @@
               "response": []
             },
             {
+              "name": "ZRC zoek expand selectielijstProcestype naam",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Zoek met fields: zaak.zaaktype.selectielijstProcestype.naam\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "    const b = pm.response.json();",
+                      "    pm.expect(b.count).to.be.above(0);",
+                      "    const zaaktype = b.results[0]._expand.zaaktype;",
+                      "    const procestype = zaaktype._expand.selectielijstProcestype;",
+                      "    pm.expect(procestype.naam).to.be.a('string').and.not.empty;",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept-Crs",
+                    "value": "EPSG:4326"
+                  },
+                  {
+                    "key": "Content-Crs",
+                    "value": "EPSG:4326"
+                  },
+                  {
+                    "key": "Api-version",
+                    "value": "1.7"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"uuid__in\": [\n        \"{{zaak_uuid}}\"\n    ],\n    \"fields\": [\n        \"identificatie\",\n        {\n            \"zaaktype\": [\n                {\n                    \"selectielijstProcestype\": [\n                        \"naam\"\n                    ]\n                }\n            ]\n        }\n    ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{zrc_url}}/zaken/_zoek",
+                  "host": [
+                    "{{zrc_url}}"
+                  ],
+                  "path": [
+                    "zaken",
+                    "_zoek"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "ZRC zoek expand selectielijstklasse volledigNummer",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "// zaak uit ZGW 1.5 / ZRC zaak zoekopties, deze heeft een resultaat",
+                      "pm.environment.set(\"zaak_zoeken_uuid\", pm.environment.get(\"zaak_zoeken_url\").split(\"/\").pop());"
+                    ]
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Zoek met fields: zaak.resultaat.resultaattype.selectielijstklasse.volledigNummer\", function () {",
+                      "    pm.response.to.have.status(200);",
+                      "    const b = pm.response.json();",
+                      "    pm.expect(b.count).to.be.above(0);",
+                      "    const resultaattype = b.results[0]._expand.resultaat._expand.resultaattype;",
+                      "    const klasse = resultaattype._expand.selectielijstklasse;",
+                      "    pm.expect(klasse.volledigNummer).to.be.a(\"string\").and.not.empty;",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept-Crs",
+                    "value": "EPSG:4326"
+                  },
+                  {
+                    "key": "Content-Crs",
+                    "value": "EPSG:4326"
+                  },
+                  {
+                    "key": "Api-version",
+                    "value": "1.7"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"uuid__in\": [\n        \"{{zaak_zoeken_uuid}}\"\n    ],\n    \"fields\": [\n        \"identificatie\",\n        {\n            \"resultaat\": [\n                {\n                    \"resultaattype\": [\n                        {\n                            \"selectielijstklasse\": [\n                                \"volledigNummer\"\n                            ]\n                        }\n                    ]\n                }\n            ]\n        }\n    ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{zrc_url}}/zaken/_zoek",
+                  "host": [
+                    "{{zrc_url}}"
+                  ],
+                  "path": [
+                    "zaken",
+                    "_zoek"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
               "name": "ZRC voeg rol met medewerker  toe aan deze zaak",
               "event": [
                 {
@@ -19266,6 +19392,3354 @@
                 }
               },
               "response": []
+            },
+            {
+              "name": "ZRC zaaknotities",
+              "item": [
+                {
+                  "name": "ZT voor zaaknotities",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "if (pm.response.code==201){",
+                          "    pm.environment.set(\"zn_zaaktype\", pm.response.json().url);",
+                          "}",
+                          "pm.test(\"Prep 2\", function () {",
+                          "    pm.response.to.have.status(201);",
+                          "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    },
+                    {
+                      "listen": "prerequest",
+                      "script": {
+                        "exec": [
+                          "const moment = require('moment');\r",
+                          "pm.environment.set(\"beginGeldigheid\",moment().format((\"YYYY-MM-DD\")));\r",
+                          "pm.environment.set(\"eindeGeldigheid\", moment().add(1,'day').format((\"YYYY-MM-DD\")));\r",
+                          "pm.environment.set(\"timestamp\", new Date().getTime());\r",
+                          ""
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n    \"identificatie\": \"P{{timestamp}}\",\r\n    \"omschrijving\": \"Een testgevalzaak\",\r\n    \"omschrijvingGeneriek\": \"Generieke omschrijviing\",\r\n    \"vertrouwelijkheidaanduiding\": \"openbaar\",\r\n    \"doel\": \"iets\",\r\n    \"aanleiding\": \"iets anders\",\r\n    \"toelichting\": \"nog iets\",\r\n    \"indicatieInternOfExtern\": \"intern\",\r\n    \"handelingInitiator\": \"Iemand deed iets\",\r\n    \"onderwerp\": \"ergens over\",\r\n    \"handelingBehandelaar\": \"iemand\",\r\n    \"doorlooptijd\": \"P2D\",\r\n    \"servicenorm\": \"P3D\",\r\n    \"opschortingEnAanhoudingMogelijk\": true,\r\n    \"verlengingMogelijk\": true,\r\n    \"verlengingstermijn\": \"P4D\",\r\n    \"trefwoorden\": [\r\n        \"string\"\r\n    ],\r\n    \"publicatieIndicatie\": true,\r\n    \"publicatietekst\": \"string\",\r\n    \"verantwoordingsrelatie\": [\r\n        \"string\"\r\n    ],\r\n    \"productenOfDiensten\": [\r\n        \"{{product_url}}\"\r\n    ],\r\n    \"selectielijstProcestype\": \"https://referentielijsten.roxit.nl/api/v1/procestypen/7ff2b005-4d84-47fe-983a-732bfa958ff5\",\r\n    \"referentieproces\": {\r\n        \"naam\": \"string\",\r\n        \"link\": \"http://example.com\"\r\n    },\r\n    \"verantwoordelijke\": \"string\",\r\n    \"broncatalogus\": {\r\n        \"url\": \"{{catalogus_url}}\",\r\n        \"domein\": \"STRIN\",\r\n        \"rsin\": \"{{rsin}}\"\r\n    },\r\n    \"bronzaaktype\": {\r\n        \"url\": \"http://example.com\",\r\n        \"identificatie\": \"string\",\r\n        \"omschrijving\": \"string\"\r\n    },\r\n    \"catalogus\": \"{{catalogus_url}}\",\r\n    \"besluittypen\": [\r\n        \"{{besluittype_omschrijving}}\"\r\n    ],\r\n    \"deelzaaktypen\": [\r\n\r\n    ],\r\n    \"gerelateerdeZaaktypen\": [\r\n        \r\n    ],\r\n    \"beginGeldigheid\": \"{{beginGeldigheid}}\",\r\n    \"eindeGeldigheid\": \"{{eindeGeldigheid}}\",\r\n    \"beginObject\": \"{{beginGeldigheid}}\",\r\n    \"eindeObject\": \"{{eindeGeldigheid}}\",\r\n    \"versiedatum\": \"{{beginGeldigheid}}\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{ztc_url}}/zaaktypen",
+                      "host": [
+                        "{{ztc_url}}"
+                      ],
+                      "path": [
+                        "zaaktypen"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "Publiceer ZT voor zaaknotities",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"Prep 2\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "url": {
+                      "raw": "{{zn_zaaktype}}/publish",
+                      "host": [
+                        "{{zn_zaaktype}}"
+                      ],
+                      "path": [
+                        "publish"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "Zaak voor zaaknotities",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "if (pm.response.code==201){",
+                          "    pm.environment.set(\"zn_zaak_url\", pm.response.json().url);",
+                          "}",
+                          "pm.test(\"Prep 2\", function () {",
+                          "    pm.response.to.have.status(201);",
+                          "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Proxy-Authorization",
+                        "value": "",
+                        "disabled": true
+                      },
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n    \"bronorganisatie\": \"{{rsin}}\",\r\n    \"omschrijving\": \"Postman test \",\r\n    \"toelichting\": \"geen toelichting\",\r\n    \"zaaktype\": \"{{zn_zaaktype}}\",\r\n    \"registratiedatum\": \"2023-07-19\",\r\n    \"verantwoordelijkeOrganisatie\": \"{{rsin}}\",\r\n    \"startdatum\": \"2023-07-19\",\r\n    \"einddatumGepland\": null,\r\n    \"uiterlijkeEinddatumAfdoening\": \"2029-08-24\",\r\n    \"publicatiedatum\": \"2029-08-25\",\r\n    \"communicatiekanaal\": \"https://referentielijsten.roxit.nl/api/v1/communicatiekanalen/2b757868-45c2-42ca-b637-b63ddc87beb4\",\r\n    \"productenOfDiensten\": [\r\n        \"{{product_url}}\"\r\n    ],\r\n    \"vertrouwelijkheidaanduiding\": \"openbaar\",\r\n    \"betalingsindicatie\": \"geheel\",\r\n    \"laatsteBetaaldatum\": \"2019-08-24\",\r\n    \"zaakgeometrie\": {\r\n        \"type\": \"Point\",\r\n        \"coordinates\": [\r\n            51.0,\r\n            4.8\r\n        ]\r\n    },\r\n    \"verlenging\": {\r\n        \"reden\": \"het duurt te kort\",\r\n        \"duur\": \"P12D\"\r\n    },\r\n    \"opschorting\": {\r\n        \"indicatie\": true,\r\n        \"reden\": \"het is niet af\"\r\n    },\r\n    \"selectielijstklasse\": \"https://referentielijsten.roxit.nl/api/v1/resultaten/02157de3-c22c-44a0-94b1-8044edf93da8\",\r\n    \"relevanteAndereZaken\": [\r\n\r\n    ],\r\n    \"kenmerken\": [\r\n        {\r\n            \"kenmerk\": \"123\",\r\n            \"bron\": \"DSO\"\r\n        },\r\n        {\r\n            \"kenmerk\": \"456\",\r\n            \"bron\": \"OLO\"\r\n        }\r\n    ],\r\n    \"archiefnominatie\": null,\r\n    \"archiefstatus\": \"nog_te_archiveren\",\r\n    \"archiefactiedatum\": null,\r\n\r\n    \"opdrachtgevendeOrganisatie\": \"123443210\",\r\n    \"processobjectaard\": null,\r\n    \"startdatumBewaartermijn\": null,\r\n    \"processobject\": null\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{zrc_url}}/zaken",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaken"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "POST zaaknotitie concept intern",
+                  "event": [
+                    {
+                      "listen": "prerequest",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.environment.set(\"timestamp\", new Date().getTime());"
+                        ]
+                      }
+                    },
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"POST zaaknotitie geeft 201\", function () {",
+                          "    pm.response.to.have.status(201);",
+                          "});",
+                          "const n = pm.response.json();",
+                          "pm.test(\"ZaakNotitie bevat alle verplichte velden\", function () {",
+                          "    ['url','onderwerp','tekst','gerelateerdAan','aanmaakdatum','wijzigingsdatum'].forEach(function (f) {",
+                          "        pm.expect(n, f).to.have.property(f);",
+                          "    });",
+                          "});",
+                          "pm.test(\"notitieType en status hebben een geldige waarde\", function () {",
+                          "    pm.expect(['intern','extern']).to.include(n.notitieType);",
+                          "    pm.expect(['concept','definitief']).to.include(n.status);",
+                          "});",
+                          "pm.test(\"Waarden komen overeen met request\", function () {",
+                          "    pm.expect(n.notitieType).to.eql('intern');",
+                          "    pm.expect(n.status).to.eql('concept');",
+                          "    pm.expect(n.gerelateerdAan).to.eql(pm.environment.get('zn_zaak_url'));",
+                          "    pm.expect(n.tekst).to.eql('Tekst van de testnotitie');",
+                          "});",
+                          "pm.test(\"Location header en API-version header aanwezig\", function () {",
+                          "    pm.expect(pm.response.headers.get('Location')).to.eql(n.url);",
+                          "    pm.response.to.have.header('API-version');",
+                          "});",
+                          "pm.test(\"url eindigt op een uuid\", function () {",
+                          "    pm.expect(n.url.split('/').pop()).to.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);",
+                          "});",
+                          "pm.environment.set(\"zn_url\", n.url);",
+                          "pm.environment.set(\"zn_uuid\", n.url.split('/').pop());",
+                          "pm.environment.set(\"zn_onderwerp\", n.onderwerp);"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"gerelateerdAan\": \"{{zn_zaak_url}}\",\n    \"onderwerp\": \"Postman notitie {{timestamp}}\",\n    \"tekst\": \"Tekst van de testnotitie\",\n    \"aangemaaktDoor\": \"Postman\",\n    \"notitieType\": \"intern\",\n    \"status\": \"concept\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "POST zaaknotitie extern definitief",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"POST definitieve externe zaaknotitie geeft 201\", function () {",
+                          "    pm.response.to.have.status(201);",
+                          "});",
+                          "const n = pm.response.json();",
+                          "pm.test(\"ZaakNotitie bevat alle verplichte velden\", function () {",
+                          "    ['url','onderwerp','tekst','gerelateerdAan','aanmaakdatum','wijzigingsdatum'].forEach(function (f) {",
+                          "        pm.expect(n, f).to.have.property(f);",
+                          "    });",
+                          "});",
+                          "pm.test(\"notitieType en status hebben een geldige waarde\", function () {",
+                          "    pm.expect(['intern','extern']).to.include(n.notitieType);",
+                          "    pm.expect(['concept','definitief']).to.include(n.status);",
+                          "});",
+                          "pm.test(\"notitieType is extern en status is definitief\", function () {",
+                          "    pm.expect(n.notitieType).to.eql('extern');",
+                          "    pm.expect(n.status).to.eql('definitief');",
+                          "});",
+                          "pm.environment.set(\"zn_def_url\", n.url);",
+                          "pm.environment.set(\"zn_def_uuid\", n.url.split('/').pop());"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"gerelateerdAan\": \"{{zn_zaak_url}}\",\n    \"onderwerp\": \"Postman definitieve notitie {{timestamp}}\",\n    \"tekst\": \"Tekst van de testnotitie\",\n    \"aangemaaktDoor\": \"Postman\",\n    \"notitieType\": \"extern\",\n    \"status\": \"definitief\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "POST zaaknotitie alleen verplichte velden",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"POST met alleen verplichte velden geeft 201\", function () {",
+                          "    pm.response.to.have.status(201);",
+                          "});",
+                          "const n = pm.response.json();",
+                          "pm.test(\"ZaakNotitie bevat alle verplichte velden\", function () {",
+                          "    ['url','onderwerp','tekst','gerelateerdAan','aanmaakdatum','wijzigingsdatum'].forEach(function (f) {",
+                          "        pm.expect(n, f).to.have.property(f);",
+                          "    });",
+                          "});",
+                          "pm.test(\"notitieType en status hebben een geldige waarde\", function () {",
+                          "    pm.expect(['intern','extern']).to.include(n.notitieType);",
+                          "    pm.expect(['concept','definitief']).to.include(n.status);",
+                          "});",
+                          "pm.environment.set(\"zn_min_url\", n.url);"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"gerelateerdAan\": \"{{zn_zaak_url}}\",\n    \"onderwerp\": \"Alleen verplicht {{timestamp}}\",\n    \"tekst\": \"Minimale notitie\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "POST zaaknotitie zonder onderwerp",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"zaaknotitie zonder onderwerp geeft 400\", function () {",
+                          "    pm.response.to.have.status(400);",
+                          "});",
+                          "pm.test(\"Response is a ValidatieFout met invalidParams\", function () {",
+                          "    const b = pm.response.json();",
+                          "    pm.expect(b).to.have.property('code');",
+                          "    pm.expect(b).to.have.property('invalidParams');",
+                          "    pm.expect(b.invalidParams).to.be.an('array').that.is.not.empty;",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"gerelateerdAan\": \"{{zn_zaak_url}}\",\n    \"tekst\": \"x\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "POST zaaknotitie zonder tekst",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"zaaknotitie zonder tekst geeft 400\", function () {",
+                          "    pm.response.to.have.status(400);",
+                          "});",
+                          "pm.test(\"Response is a ValidatieFout met invalidParams\", function () {",
+                          "    const b = pm.response.json();",
+                          "    pm.expect(b).to.have.property('code');",
+                          "    pm.expect(b).to.have.property('invalidParams');",
+                          "    pm.expect(b.invalidParams).to.be.an('array').that.is.not.empty;",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"gerelateerdAan\": \"{{zn_zaak_url}}\",\n    \"onderwerp\": \"x\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "POST zaaknotitie zonder gerelateerdAan",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"zaaknotitie zonder gerelateerdAan geeft 400\", function () {",
+                          "    pm.response.to.have.status(400);",
+                          "});",
+                          "pm.test(\"Response is a ValidatieFout met invalidParams\", function () {",
+                          "    const b = pm.response.json();",
+                          "    pm.expect(b).to.have.property('code');",
+                          "    pm.expect(b).to.have.property('invalidParams');",
+                          "    pm.expect(b.invalidParams).to.be.an('array').that.is.not.empty;",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"onderwerp\": \"x\",\n    \"tekst\": \"x\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "POST zaaknotitie lege body",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"zaaknotitie lege body geeft 400\", function () {",
+                          "    pm.response.to.have.status(400);",
+                          "});",
+                          "pm.test(\"Response is a ValidatieFout met invalidParams\", function () {",
+                          "    const b = pm.response.json();",
+                          "    pm.expect(b).to.have.property('code');",
+                          "    pm.expect(b).to.have.property('invalidParams');",
+                          "    pm.expect(b.invalidParams).to.be.an('array').that.is.not.empty;",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "POST zaaknotitie ongeldig notitieType",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"zaaknotitie ongeldig notitieType geeft 400\", function () {",
+                          "    pm.response.to.have.status(400);",
+                          "});",
+                          "pm.test(\"Response is a ValidatieFout met invalidParams\", function () {",
+                          "    const b = pm.response.json();",
+                          "    pm.expect(b).to.have.property('code');",
+                          "    pm.expect(b).to.have.property('invalidParams');",
+                          "    pm.expect(b.invalidParams).to.be.an('array').that.is.not.empty;",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"gerelateerdAan\": \"{{zn_zaak_url}}\",\n    \"onderwerp\": \"Postman notitie {{timestamp}}\",\n    \"tekst\": \"Tekst van de testnotitie\",\n    \"aangemaaktDoor\": \"Postman\",\n    \"notitieType\": \"geheim\",\n    \"status\": \"concept\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "POST zaaknotitie ongeldige status",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"zaaknotitie ongeldige status geeft 400\", function () {",
+                          "    pm.response.to.have.status(400);",
+                          "});",
+                          "pm.test(\"Response is a ValidatieFout met invalidParams\", function () {",
+                          "    const b = pm.response.json();",
+                          "    pm.expect(b).to.have.property('code');",
+                          "    pm.expect(b).to.have.property('invalidParams');",
+                          "    pm.expect(b.invalidParams).to.be.an('array').that.is.not.empty;",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"gerelateerdAan\": \"{{zn_zaak_url}}\",\n    \"onderwerp\": \"Postman notitie {{timestamp}}\",\n    \"tekst\": \"Tekst van de testnotitie\",\n    \"aangemaaktDoor\": \"Postman\",\n    \"notitieType\": \"intern\",\n    \"status\": \"afgerond\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "POST zaaknotitie onderwerp langer dan 255 tekens",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"zaaknotitie onderwerp langer dan 255 tekens geeft 400\", function () {",
+                          "    pm.response.to.have.status(400);",
+                          "});",
+                          "pm.test(\"Response is a ValidatieFout met invalidParams\", function () {",
+                          "    const b = pm.response.json();",
+                          "    pm.expect(b).to.have.property('code');",
+                          "    pm.expect(b).to.have.property('invalidParams');",
+                          "    pm.expect(b.invalidParams).to.be.an('array').that.is.not.empty;",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"gerelateerdAan\": \"{{zn_zaak_url}}\",\n    \"onderwerp\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\n    \"tekst\": \"Tekst van de testnotitie\",\n    \"aangemaaktDoor\": \"Postman\",\n    \"notitieType\": \"intern\",\n    \"status\": \"concept\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "POST zaaknotitie gerelateerdAan geen url",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"zaaknotitie gerelateerdAan geen url geeft 400\", function () {",
+                          "    pm.response.to.have.status(400);",
+                          "});",
+                          "pm.test(\"Response is a ValidatieFout met invalidParams\", function () {",
+                          "    const b = pm.response.json();",
+                          "    pm.expect(b).to.have.property('code');",
+                          "    pm.expect(b).to.have.property('invalidParams');",
+                          "    pm.expect(b.invalidParams).to.be.an('array').that.is.not.empty;",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"gerelateerdAan\": \"geen-url\",\n    \"onderwerp\": \"Postman notitie {{timestamp}}\",\n    \"tekst\": \"Tekst van de testnotitie\",\n    \"aangemaaktDoor\": \"Postman\",\n    \"notitieType\": \"intern\",\n    \"status\": \"concept\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "POST zaaknotitie gerelateerdAan verwijst naar niet bestaande zaak",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"zaaknotitie gerelateerdAan verwijst naar niet bestaande zaak geeft 400\", function () {",
+                          "    pm.response.to.have.status(400);",
+                          "});",
+                          "pm.test(\"Response is a ValidatieFout met invalidParams\", function () {",
+                          "    const b = pm.response.json();",
+                          "    pm.expect(b).to.have.property('code');",
+                          "    pm.expect(b).to.have.property('invalidParams');",
+                          "    pm.expect(b.invalidParams).to.be.an('array').that.is.not.empty;",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"gerelateerdAan\": \"{{zrc_url}}/zaken/00000000-0000-0000-0000-000000000000\",\n    \"onderwerp\": \"Postman notitie {{timestamp}}\",\n    \"tekst\": \"Tekst van de testnotitie\",\n    \"aangemaaktDoor\": \"Postman\",\n    \"notitieType\": \"intern\",\n    \"status\": \"concept\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "POST zaaknotitie zonder autorisatie",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"POST zonder token geeft 401\", function () {",
+                          "    pm.response.to.have.status(401);",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ]
+                    },
+                    "auth": {
+                      "type": "noauth"
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"gerelateerdAan\": \"{{zn_zaak_url}}\",\n    \"onderwerp\": \"Postman notitie {{timestamp}}\",\n    \"tekst\": \"Tekst van de testnotitie\",\n    \"aangemaaktDoor\": \"Postman\",\n    \"notitieType\": \"intern\",\n    \"status\": \"concept\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET zaaknotities lijst",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"GET lijst geeft 200\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "});",
+                          "const b = pm.response.json();",
+                          "pm.test(\"Response is gepagineerd (count en results)\", function () {",
+                          "    pm.expect(b.count).to.be.a('number');",
+                          "    pm.expect(b.results).to.be.an('array');",
+                          "    pm.expect(b).to.have.property('next');",
+                          "    pm.expect(b).to.have.property('previous');",
+                          "});",
+                          "pm.test(\"Lijst bevat de aangemaakte notities\", function () {",
+                          "    const urls = b.results.map(function (r) { return r.url; });",
+                          "    pm.expect(b.count).to.be.at.least(3);",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET zaaknotities filter status=definitief",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"GET zaaknotities filter status=definitief geeft 200\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "});",
+                          "const b = pm.response.json();",
+                          "pm.test(\"Alle resultaten hebben status definitief\", function () {",
+                          "    pm.expect(b.results).to.not.be.empty;",
+                          "    b.results.forEach(function (r) { pm.expect(r.status).to.eql('definitief'); });",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities?status=definitief",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ],
+                      "query": [
+                        {
+                          "key": "status",
+                          "value": "definitief"
+                        }
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET zaaknotities filter status=concept",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"GET zaaknotities filter status=concept geeft 200\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "});",
+                          "const b = pm.response.json();",
+                          "pm.test(\"Alle resultaten hebben status concept\", function () {",
+                          "    pm.expect(b.results).to.not.be.empty;",
+                          "    b.results.forEach(function (r) { pm.expect(r.status).to.eql('concept'); });",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities?status=concept",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ],
+                      "query": [
+                        {
+                          "key": "status",
+                          "value": "concept"
+                        }
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET zaaknotities filter notitieType=extern",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"GET zaaknotities filter notitieType=extern geeft 200\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "});",
+                          "const b = pm.response.json();",
+                          "pm.test(\"Alle resultaten zijn extern\", function () {",
+                          "    pm.expect(b.results).to.not.be.empty;",
+                          "    b.results.forEach(function (r) { pm.expect(r.notitieType).to.eql('extern'); });",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities?notitieType=extern",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ],
+                      "query": [
+                        {
+                          "key": "notitieType",
+                          "value": "extern"
+                        }
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET zaaknotities filter notitieType=intern",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"GET zaaknotities filter notitieType=intern geeft 200\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "});",
+                          "const b = pm.response.json();",
+                          "pm.test(\"Alle resultaten zijn intern\", function () {",
+                          "    pm.expect(b.results).to.not.be.empty;",
+                          "    b.results.forEach(function (r) { pm.expect(r.notitieType).to.eql('intern'); });",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities?notitieType=intern",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ],
+                      "query": [
+                        {
+                          "key": "notitieType",
+                          "value": "intern"
+                        }
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET zaaknotities filter onderwerp (exact)",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"GET zaaknotities filter onderwerp (exact) geeft 200\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "});",
+                          "const b = pm.response.json();",
+                          "pm.test(\"Precies de notitie met dit onderwerp\", function () {",
+                          "    pm.expect(b.results).to.not.be.empty;",
+                          "    b.results.forEach(function (r) { pm.expect(r.onderwerp).to.eql(pm.environment.get('zn_onderwerp')); });",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities?onderwerp={{zn_onderwerp}}",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ],
+                      "query": [
+                        {
+                          "key": "onderwerp",
+                          "value": "{{zn_onderwerp}}"
+                        }
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET zaaknotities filter onderwerp__icontains",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"GET zaaknotities filter onderwerp__icontains geeft 200\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "});",
+                          "const b = pm.response.json();",
+                          "pm.test(\"Resultaten bevatten de zoektekst (hoofdletterongevoelig)\", function () {",
+                          "    pm.expect(b.results).to.not.be.empty;",
+                          "    b.results.forEach(function (r) { pm.expect(r.onderwerp.toLowerCase()).to.include('definitieve notitie'); });",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities?onderwerp__icontains=DEFINITIEVE notitie",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ],
+                      "query": [
+                        {
+                          "key": "onderwerp__icontains",
+                          "value": "DEFINITIEVE notitie"
+                        }
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET zaaknotities filter tekst__icontains",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"GET zaaknotities filter tekst__icontains geeft 200\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "});",
+                          "const b = pm.response.json();",
+                          "pm.test(\"Resultaten bevatten de zoektekst in tekst\", function () {",
+                          "    pm.expect(b.results).to.not.be.empty;",
+                          "    b.results.forEach(function (r) { pm.expect(r.tekst.toLowerCase()).to.include('testnotitie'); });",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities?tekst__icontains=TESTNOTITIE",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ],
+                      "query": [
+                        {
+                          "key": "tekst__icontains",
+                          "value": "TESTNOTITIE"
+                        }
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET zaaknotities filter aangemaaktDoor",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"GET zaaknotities filter aangemaaktDoor geeft 200\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "});",
+                          "const b = pm.response.json();",
+                          "pm.test(\"Alle resultaten zijn aangemaakt door Postman\", function () {",
+                          "    pm.expect(b.results).to.not.be.empty;",
+                          "    b.results.forEach(function (r) { pm.expect(r.aangemaaktDoor).to.eql('Postman'); });",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities?aangemaaktDoor=Postman",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ],
+                      "query": [
+                        {
+                          "key": "aangemaaktDoor",
+                          "value": "Postman"
+                        }
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET zaaknotities filter aangemaaktDoor__icontains",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"GET zaaknotities filter aangemaaktDoor__icontains geeft 200\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "});",
+                          "const b = pm.response.json();",
+                          "pm.test(\"Alle resultaten bevatten postm in aangemaaktDoor\", function () {",
+                          "    pm.expect(b.results).to.not.be.empty;",
+                          "    b.results.forEach(function (r) { pm.expect(r.aangemaaktDoor.toLowerCase()).to.include('postm'); });",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities?aangemaaktDoor__icontains=postm",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ],
+                      "query": [
+                        {
+                          "key": "aangemaaktDoor__icontains",
+                          "value": "postm"
+                        }
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET zaaknotities filter gerelateerdAan",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"GET zaaknotities filter gerelateerdAan geeft 200\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "});",
+                          "const b = pm.response.json();",
+                          "pm.test(\"Alle resultaten horen bij de zaak\", function () {",
+                          "    pm.expect(b.results).to.not.be.empty;",
+                          "    b.results.forEach(function (r) { pm.expect(r.gerelateerdAan).to.eql(pm.environment.get('zn_zaak_url')); });",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities?gerelateerdAan={{zn_zaak_url}}",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ],
+                      "query": [
+                        {
+                          "key": "gerelateerdAan",
+                          "value": "{{zn_zaak_url}}"
+                        }
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET zaaknotities filter aanmaakdatum__gte in de toekomst",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"GET zaaknotities filter aanmaakdatum__gte in de toekomst geeft 200\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "});",
+                          "const b = pm.response.json();",
+                          "pm.test(\"Geen resultaten\", function () {",
+                          "    pm.expect(b.count).to.eql(0);",
+                          "    pm.expect(b.results).to.be.empty;",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities?aanmaakdatum__gte=2999-01-01T00:00:00Z",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ],
+                      "query": [
+                        {
+                          "key": "aanmaakdatum__gte",
+                          "value": "2999-01-01T00:00:00Z"
+                        }
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET zaaknotities filter aanmaakdatum__lte in het verleden",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"GET zaaknotities filter aanmaakdatum__lte in het verleden geeft 200\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "});",
+                          "const b = pm.response.json();",
+                          "pm.test(\"Geen resultaten\", function () {",
+                          "    pm.expect(b.count).to.eql(0);",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities?aanmaakdatum__lte=2000-01-01T00:00:00Z",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ],
+                      "query": [
+                        {
+                          "key": "aanmaakdatum__lte",
+                          "value": "2000-01-01T00:00:00Z"
+                        }
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET zaaknotities filter wijzigingsdatum__gte in de toekomst",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"GET zaaknotities filter wijzigingsdatum__gte in de toekomst geeft 200\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "});",
+                          "const b = pm.response.json();",
+                          "pm.test(\"Geen resultaten\", function () {",
+                          "    pm.expect(b.count).to.eql(0);",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities?wijzigingsdatum__gte=2999-01-01T00:00:00Z",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ],
+                      "query": [
+                        {
+                          "key": "wijzigingsdatum__gte",
+                          "value": "2999-01-01T00:00:00Z"
+                        }
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET zaaknotities filter wijzigingsdatum__lte in het verleden",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"GET zaaknotities filter wijzigingsdatum__lte in het verleden geeft 200\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "});",
+                          "const b = pm.response.json();",
+                          "pm.test(\"Geen resultaten\", function () {",
+                          "    pm.expect(b.count).to.eql(0);",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities?wijzigingsdatum__lte=2000-01-01T00:00:00Z",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ],
+                      "query": [
+                        {
+                          "key": "wijzigingsdatum__lte",
+                          "value": "2000-01-01T00:00:00Z"
+                        }
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET zaaknotities pageSize=1",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"GET zaaknotities pageSize=1 geeft 200\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "});",
+                          "const b = pm.response.json();",
+                          "pm.test(\"Maximaal 1 resultaat en next aanwezig\", function () {",
+                          "    pm.expect(b.results.length).to.eql(1);",
+                          "    pm.expect(b.count).to.be.at.least(2);",
+                          "    pm.expect(b.next).to.not.be.null;",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities?pageSize=1",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ],
+                      "query": [
+                        {
+                          "key": "pageSize",
+                          "value": "1"
+                        }
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET zaaknotities pageSize=1 page=2",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"GET zaaknotities pageSize=1 page=2 geeft 200\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "});",
+                          "const b = pm.response.json();",
+                          "pm.test(\"Tweede pagina heeft 1 resultaat en previous\", function () {",
+                          "    pm.expect(b.results.length).to.eql(1);",
+                          "    pm.expect(b.previous).to.not.be.null;",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities?pageSize=1&page=2",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ],
+                      "query": [
+                        {
+                          "key": "pageSize",
+                          "value": "1"
+                        },
+                        {
+                          "key": "page",
+                          "value": "2"
+                        }
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET zaaknotities ongeldige status filter",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"Ongeldige status filterwaarde geeft 400\", function () {",
+                          "    pm.response.to.have.status(400);",
+                          "});",
+                          "pm.test(\"Response is a ValidatieFout met invalidParams\", function () {",
+                          "    const b = pm.response.json();",
+                          "    pm.expect(b).to.have.property('code');",
+                          "    pm.expect(b).to.have.property('invalidParams');",
+                          "    pm.expect(b.invalidParams).to.be.an('array').that.is.not.empty;",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities?status=bestaatniet",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ],
+                      "query": [
+                        {
+                          "key": "status",
+                          "value": "bestaatniet"
+                        }
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET zaaknotities ongeldige notitieType filter",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"Ongeldige notitieType filterwaarde geeft 400\", function () {",
+                          "    pm.response.to.have.status(400);",
+                          "});",
+                          "pm.test(\"Response is a ValidatieFout met invalidParams\", function () {",
+                          "    const b = pm.response.json();",
+                          "    pm.expect(b).to.have.property('code');",
+                          "    pm.expect(b).to.have.property('invalidParams');",
+                          "    pm.expect(b.invalidParams).to.be.an('array').that.is.not.empty;",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities?notitieType=bestaatniet",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ],
+                      "query": [
+                        {
+                          "key": "notitieType",
+                          "value": "bestaatniet"
+                        }
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET zaaknotities zonder autorisatie",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"GET lijst zonder token geeft 401\", function () {",
+                          "    pm.response.to.have.status(401);",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ]
+                    },
+                    "auth": {
+                      "type": "noauth"
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET zaaknotitie detail",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"GET detail geeft 200\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "});",
+                          "const n = pm.response.json();",
+                          "pm.test(\"ZaakNotitie bevat alle verplichte velden\", function () {",
+                          "    ['url','onderwerp','tekst','gerelateerdAan','aanmaakdatum','wijzigingsdatum'].forEach(function (f) {",
+                          "        pm.expect(n, f).to.have.property(f);",
+                          "    });",
+                          "});",
+                          "pm.test(\"notitieType en status hebben een geldige waarde\", function () {",
+                          "    pm.expect(['intern','extern']).to.include(n.notitieType);",
+                          "    pm.expect(['concept','definitief']).to.include(n.status);",
+                          "});",
+                          "pm.test(\"Detail komt overeen met aangemaakte notitie\", function () {",
+                          "    pm.expect(n.url).to.eql(pm.environment.get('zn_url'));",
+                          "    pm.expect(n.onderwerp).to.eql(pm.environment.get('zn_onderwerp'));",
+                          "    pm.expect(n.status).to.eql('concept');",
+                          "});",
+                          "pm.test(\"API-version header aanwezig\", function () {",
+                          "    pm.response.to.have.header('API-version');",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zn_url}}",
+                      "host": [
+                        "{{zn_url}}"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET zaaknotitie onbekende uuid",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"GET onbekende uuid geeft 404\", function () {",
+                          "    pm.response.to.have.status(404);",
+                          "});",
+                          "pm.test(\"Response is een Fout\", function () {",
+                          "    const b = pm.response.json();",
+                          "    pm.expect(b).to.have.property('code');",
+                          "    pm.expect(b).to.have.property('status', 404);",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities/00000000-0000-0000-0000-000000000000",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities",
+                        "00000000-0000-0000-0000-000000000000"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET zaaknotitie ongeldige uuid",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"GET ongeldige uuid geeft 404 (of 400)\", function () {",
+                          "    pm.expect([400, 404]).to.include(pm.response.code);",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities/geen-uuid",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities",
+                        "geen-uuid"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET zaaknotitie zonder autorisatie",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"GET detail zonder token geeft 401\", function () {",
+                          "    pm.response.to.have.status(401);",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zn_url}}",
+                      "host": [
+                        "{{zn_url}}"
+                      ]
+                    },
+                    "auth": {
+                      "type": "noauth"
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "PUT zaaknotitie concept",
+                  "event": [
+                    {
+                      "listen": "prerequest",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.environment.set(\"timestamp\", new Date().getTime());"
+                        ]
+                      }
+                    },
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"PUT concept notitie geeft 200\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "});",
+                          "const n = pm.response.json();",
+                          "pm.test(\"ZaakNotitie bevat alle verplichte velden\", function () {",
+                          "    ['url','onderwerp','tekst','gerelateerdAan','aanmaakdatum','wijzigingsdatum'].forEach(function (f) {",
+                          "        pm.expect(n, f).to.have.property(f);",
+                          "    });",
+                          "});",
+                          "pm.test(\"notitieType en status hebben een geldige waarde\", function () {",
+                          "    pm.expect(['intern','extern']).to.include(n.notitieType);",
+                          "    pm.expect(['concept','definitief']).to.include(n.status);",
+                          "});",
+                          "pm.test(\"Alle velden zijn bijgewerkt\", function () {",
+                          "    pm.expect(n.onderwerp).to.include('Bijgewerkt via PUT');",
+                          "    pm.expect(n.tekst).to.eql('Tekst na PUT');",
+                          "    pm.expect(n.notitieType).to.eql('extern');",
+                          "    pm.expect(n.status).to.eql('concept');",
+                          "    pm.expect(n.url).to.eql(pm.environment.get('zn_url'));",
+                          "});",
+                          "pm.environment.set(\"zn_onderwerp\", n.onderwerp);"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zn_url}}",
+                      "host": [
+                        "{{zn_url}}"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"gerelateerdAan\": \"{{zn_zaak_url}}\",\n    \"onderwerp\": \"Bijgewerkt via PUT {{timestamp}}\",\n    \"tekst\": \"Tekst na PUT\",\n    \"aangemaaktDoor\": \"Postman\",\n    \"notitieType\": \"extern\",\n    \"status\": \"concept\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET zaaknotitie na PUT",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"GET na PUT geeft 200\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "});",
+                          "pm.test(\"Wijziging is opgeslagen\", function () {",
+                          "    const n = pm.response.json();",
+                          "    pm.expect(n.tekst).to.eql('Tekst na PUT');",
+                          "    pm.expect(n.notitieType).to.eql('extern');",
+                          "    pm.expect(n.wijzigingsdatum >= n.aanmaakdatum).to.be.true;",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zn_url}}",
+                      "host": [
+                        "{{zn_url}}"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "PUT zaaknotitie zonder verplichte velden",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"PUT zonder verplichte velden geeft 400\", function () {",
+                          "    pm.response.to.have.status(400);",
+                          "});",
+                          "pm.test(\"Response is a ValidatieFout met invalidParams\", function () {",
+                          "    const b = pm.response.json();",
+                          "    pm.expect(b).to.have.property('code');",
+                          "    pm.expect(b).to.have.property('invalidParams');",
+                          "    pm.expect(b.invalidParams).to.be.an('array').that.is.not.empty;",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zn_url}}",
+                      "host": [
+                        "{{zn_url}}"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"onderwerp\": \"alleen onderwerp\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "PUT zaaknotitie ongeldig notitieType",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"PUT met ongeldig notitieType geeft 400\", function () {",
+                          "    pm.response.to.have.status(400);",
+                          "});",
+                          "pm.test(\"Response is a ValidatieFout met invalidParams\", function () {",
+                          "    const b = pm.response.json();",
+                          "    pm.expect(b).to.have.property('code');",
+                          "    pm.expect(b).to.have.property('invalidParams');",
+                          "    pm.expect(b.invalidParams).to.be.an('array').that.is.not.empty;",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zn_url}}",
+                      "host": [
+                        "{{zn_url}}"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"gerelateerdAan\": \"{{zn_zaak_url}}\",\n    \"onderwerp\": \"Bijgewerkt via PUT {{timestamp}}\",\n    \"tekst\": \"Tekst na PUT\",\n    \"aangemaaktDoor\": \"Postman\",\n    \"notitieType\": \"geheim\",\n    \"status\": \"concept\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "PUT zaaknotitie onbekende uuid",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"PUT onbekende uuid geeft 404\", function () {",
+                          "    pm.response.to.have.status(404);",
+                          "});",
+                          "pm.test(\"Response is een Fout\", function () {",
+                          "    const b = pm.response.json();",
+                          "    pm.expect(b).to.have.property('code');",
+                          "    pm.expect(b).to.have.property('status', 404);",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities/00000000-0000-0000-0000-000000000000",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities",
+                        "00000000-0000-0000-0000-000000000000"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"gerelateerdAan\": \"{{zn_zaak_url}}\",\n    \"onderwerp\": \"Bijgewerkt via PUT {{timestamp}}\",\n    \"tekst\": \"Tekst na PUT\",\n    \"aangemaaktDoor\": \"Postman\",\n    \"notitieType\": \"extern\",\n    \"status\": \"concept\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "PUT zaaknotitie definitief mag niet",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"PUT op definitieve notitie wordt geweigerd (4xx, OAS geeft geen code)\", function () {",
+                          "    pm.expect(pm.response.code).to.be.within(400, 499);",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zn_def_url}}",
+                      "host": [
+                        "{{zn_def_url}}"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"gerelateerdAan\": \"{{zn_zaak_url}}\",\n    \"onderwerp\": \"Bijgewerkt via PUT {{timestamp}}\",\n    \"tekst\": \"Tekst na PUT\",\n    \"aangemaaktDoor\": \"Postman\",\n    \"notitieType\": \"extern\",\n    \"status\": \"definitief\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "PUT zaaknotitie zonder autorisatie",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"PUT zonder token geeft 401\", function () {",
+                          "    pm.response.to.have.status(401);",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zn_url}}",
+                      "host": [
+                        "{{zn_url}}"
+                      ]
+                    },
+                    "auth": {
+                      "type": "noauth"
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"gerelateerdAan\": \"{{zn_zaak_url}}\",\n    \"onderwerp\": \"Bijgewerkt via PUT {{timestamp}}\",\n    \"tekst\": \"Tekst na PUT\",\n    \"aangemaaktDoor\": \"Postman\",\n    \"notitieType\": \"extern\",\n    \"status\": \"concept\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "PATCH zaaknotitie concept tekst",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"PATCH concept notitie geeft 200\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "});",
+                          "const n = pm.response.json();",
+                          "pm.test(\"ZaakNotitie bevat alle verplichte velden\", function () {",
+                          "    ['url','onderwerp','tekst','gerelateerdAan','aanmaakdatum','wijzigingsdatum'].forEach(function (f) {",
+                          "        pm.expect(n, f).to.have.property(f);",
+                          "    });",
+                          "});",
+                          "pm.test(\"notitieType en status hebben een geldige waarde\", function () {",
+                          "    pm.expect(['intern','extern']).to.include(n.notitieType);",
+                          "    pm.expect(['concept','definitief']).to.include(n.status);",
+                          "});",
+                          "pm.test(\"Alleen tekst is gewijzigd\", function () {",
+                          "    pm.expect(n.tekst).to.eql('Tekst na PATCH');",
+                          "    pm.expect(n.onderwerp).to.eql(pm.environment.get('zn_onderwerp'));",
+                          "    pm.expect(n.notitieType).to.eql('extern');",
+                          "    pm.expect(n.status).to.eql('concept');",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zn_url}}",
+                      "host": [
+                        "{{zn_url}}"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"tekst\": \"Tekst na PATCH\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "PATCH zaaknotitie lege body",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"PATCH met lege body geeft 200\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "});",
+                          "pm.test(\"Notitie is ongewijzigd\", function () {",
+                          "    const n = pm.response.json();",
+                          "    pm.expect(n.tekst).to.eql('Tekst na PATCH');",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zn_url}}",
+                      "host": [
+                        "{{zn_url}}"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "PATCH zaaknotitie ongeldige status",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"PATCH met ongeldige status geeft 400\", function () {",
+                          "    pm.response.to.have.status(400);",
+                          "});",
+                          "pm.test(\"Response is a ValidatieFout met invalidParams\", function () {",
+                          "    const b = pm.response.json();",
+                          "    pm.expect(b).to.have.property('code');",
+                          "    pm.expect(b).to.have.property('invalidParams');",
+                          "    pm.expect(b.invalidParams).to.be.an('array').that.is.not.empty;",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zn_url}}",
+                      "host": [
+                        "{{zn_url}}"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"status\": \"afgerond\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "PATCH zaaknotitie onderwerp langer dan 255 tekens",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"PATCH met te lang onderwerp geeft 400\", function () {",
+                          "    pm.response.to.have.status(400);",
+                          "});",
+                          "pm.test(\"Response is a ValidatieFout met invalidParams\", function () {",
+                          "    const b = pm.response.json();",
+                          "    pm.expect(b).to.have.property('code');",
+                          "    pm.expect(b).to.have.property('invalidParams');",
+                          "    pm.expect(b.invalidParams).to.be.an('array').that.is.not.empty;",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zn_url}}",
+                      "host": [
+                        "{{zn_url}}"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"onderwerp\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "PATCH zaaknotitie lege tekst",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"PATCH met lege tekst geeft 400\", function () {",
+                          "    pm.response.to.have.status(400);",
+                          "});",
+                          "pm.test(\"Response is a ValidatieFout met invalidParams\", function () {",
+                          "    const b = pm.response.json();",
+                          "    pm.expect(b).to.have.property('code');",
+                          "    pm.expect(b).to.have.property('invalidParams');",
+                          "    pm.expect(b.invalidParams).to.be.an('array').that.is.not.empty;",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zn_url}}",
+                      "host": [
+                        "{{zn_url}}"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"tekst\": \"\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "PATCH zaaknotitie onbekende uuid",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"PATCH onbekende uuid geeft 404\", function () {",
+                          "    pm.response.to.have.status(404);",
+                          "});",
+                          "pm.test(\"Response is een Fout\", function () {",
+                          "    const b = pm.response.json();",
+                          "    pm.expect(b).to.have.property('code');",
+                          "    pm.expect(b).to.have.property('status', 404);",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities/00000000-0000-0000-0000-000000000000",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities",
+                        "00000000-0000-0000-0000-000000000000"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"tekst\": \"x\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "PATCH zaaknotitie zonder autorisatie",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"PATCH zonder token geeft 401\", function () {",
+                          "    pm.response.to.have.status(401);",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zn_url}}",
+                      "host": [
+                        "{{zn_url}}"
+                      ]
+                    },
+                    "auth": {
+                      "type": "noauth"
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"tekst\": \"x\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "PATCH zaaknotitie status naar definitief",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"PATCH status naar definitief geeft 200\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "});",
+                          "pm.test(\"Status is definitief\", function () {",
+                          "    pm.expect(pm.response.json().status).to.eql('definitief');",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zn_url}}",
+                      "host": [
+                        "{{zn_url}}"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"status\": \"definitief\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "PATCH zaaknotitie definitief mag niet",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"PATCH op definitieve notitie wordt geweigerd (4xx, OAS geeft geen code)\", function () {",
+                          "    pm.expect(pm.response.code).to.be.within(400, 499);",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zn_url}}",
+                      "host": [
+                        "{{zn_url}}"
+                      ]
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"tekst\": \"Mag niet meer\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET zaaknotitie na geweigerde PATCH",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"GET geeft 200\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "});",
+                          "pm.test(\"Tekst is niet gewijzigd door geweigerde PATCH\", function () {",
+                          "    pm.expect(pm.response.json().tekst).to.eql('Tekst na PATCH');",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zn_url}}",
+                      "host": [
+                        "{{zn_url}}"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "DELETE zaaknotitie zonder autorisatie",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"DELETE zonder token geeft 401\", function () {",
+                          "    pm.response.to.have.status(401);",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zn_min_url}}",
+                      "host": [
+                        "{{zn_min_url}}"
+                      ]
+                    },
+                    "auth": {
+                      "type": "noauth"
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "DELETE zaaknotitie concept",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"DELETE concept notitie geeft 204\", function () {",
+                          "    pm.response.to.have.status(204);",
+                          "});",
+                          "pm.test(\"Response heeft geen body\", function () {",
+                          "    pm.expect(pm.response.text()).to.eql('');",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zn_min_url}}",
+                      "host": [
+                        "{{zn_min_url}}"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET zaaknotitie na DELETE",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"GET na DELETE geeft 404\", function () {",
+                          "    pm.response.to.have.status(404);",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zn_min_url}}",
+                      "host": [
+                        "{{zn_min_url}}"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "DELETE zaaknotitie al verwijderd",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"DELETE al verwijderde notitie geeft 404\", function () {",
+                          "    pm.response.to.have.status(404);",
+                          "});",
+                          "pm.test(\"Response is een Fout\", function () {",
+                          "    const b = pm.response.json();",
+                          "    pm.expect(b).to.have.property('code');",
+                          "    pm.expect(b).to.have.property('status', 404);",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zn_min_url}}",
+                      "host": [
+                        "{{zn_min_url}}"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "DELETE zaaknotitie onbekende uuid",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"DELETE onbekende uuid geeft 404\", function () {",
+                          "    pm.response.to.have.status(404);",
+                          "});",
+                          "pm.test(\"Response is een Fout\", function () {",
+                          "    const b = pm.response.json();",
+                          "    pm.expect(b).to.have.property('code');",
+                          "    pm.expect(b).to.have.property('status', 404);",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities/00000000-0000-0000-0000-000000000000",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities",
+                        "00000000-0000-0000-0000-000000000000"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "DELETE zaaknotitie definitief",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"DELETE definitieve notitie geeft 204 (OAS kent geen beperking)\", function () {",
+                          "    pm.response.to.have.status(204);",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zn_url}}",
+                      "host": [
+                        "{{zn_url}}"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET zaaknotitie definitief na DELETE",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"GET na DELETE geeft 404\", function () {",
+                          "    pm.response.to.have.status(404);",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zn_url}}",
+                      "host": [
+                        "{{zn_url}}"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "DELETE zaaknotitie extern definitief (opruimen)",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"DELETE opruimen geeft 204\", function () {",
+                          "    pm.response.to.have.status(204);",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{zn_def_url}}",
+                      "host": [
+                        "{{zn_def_url}}"
+                      ]
+                    }
+                  },
+                  "response": []
+                }
+              ]
             }
           ]
         },
@@ -19913,14 +23387,498 @@
               "response": []
             }
           ]
+        },
+        {
+          "name": "ZTC 1.4",
+          "item": [
+            {
+              "name": "expand",
+              "item": [
+                {
+                  "name": "ZT voor expand",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "if (pm.response.code==201){",
+                          "    pm.environment.set(\"ztcx_zaaktype\", pm.response.json().url);",
+                          "}",
+                          "pm.test(\"Prep 2\", function () {",
+                          "    pm.response.to.have.status(201);",
+                          "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    },
+                    {
+                      "listen": "prerequest",
+                      "script": {
+                        "exec": [
+                          "const moment = require('moment');\r",
+                          "pm.environment.set(\"beginGeldigheid\",moment().format((\"YYYY-MM-DD\")));\r",
+                          "pm.environment.set(\"eindeGeldigheid\", moment().add(1,'day').format((\"YYYY-MM-DD\")));\r",
+                          "pm.environment.set(\"timestamp\", new Date().getTime());\r",
+                          ""
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n    \"identificatie\": \"P{{timestamp}}\",\r\n    \"omschrijving\": \"Een testgevalzaak\",\r\n    \"omschrijvingGeneriek\": \"Generieke omschrijviing\",\r\n    \"vertrouwelijkheidaanduiding\": \"openbaar\",\r\n    \"doel\": \"iets\",\r\n    \"aanleiding\": \"iets anders\",\r\n    \"toelichting\": \"nog iets\",\r\n    \"indicatieInternOfExtern\": \"intern\",\r\n    \"handelingInitiator\": \"Iemand deed iets\",\r\n    \"onderwerp\": \"ergens over\",\r\n    \"handelingBehandelaar\": \"iemand\",\r\n    \"doorlooptijd\": \"P2D\",\r\n    \"servicenorm\": \"P3D\",\r\n    \"opschortingEnAanhoudingMogelijk\": true,\r\n    \"verlengingMogelijk\": true,\r\n    \"verlengingstermijn\": \"P4D\",\r\n    \"trefwoorden\": [\r\n        \"string\"\r\n    ],\r\n    \"publicatieIndicatie\": true,\r\n    \"publicatietekst\": \"string\",\r\n    \"verantwoordingsrelatie\": [\r\n        \"string\"\r\n    ],\r\n    \"productenOfDiensten\": [\r\n        \"{{product_url}}\"\r\n    ],\r\n    \"selectielijstProcestype\": \"https://referentielijsten.roxit.nl/api/v1/procestypen/7ff2b005-4d84-47fe-983a-732bfa958ff5\",\r\n    \"referentieproces\": {\r\n        \"naam\": \"string\",\r\n        \"link\": \"http://example.com\"\r\n    },\r\n    \"verantwoordelijke\": \"string\",\r\n    \"broncatalogus\": {\r\n        \"url\": \"{{catalogus_url}}\",\r\n        \"domein\": \"STRIN\",\r\n        \"rsin\": \"{{rsin}}\"\r\n    },\r\n    \"bronzaaktype\": {\r\n        \"url\": \"http://example.com\",\r\n        \"identificatie\": \"string\",\r\n        \"omschrijving\": \"string\"\r\n    },\r\n    \"catalogus\": \"{{catalogus_url}}\",\r\n    \"besluittypen\": [\r\n        \"{{besluittype_omschrijving}}\"\r\n    ],\r\n    \"deelzaaktypen\": [\r\n\r\n    ],\r\n    \"gerelateerdeZaaktypen\": [\r\n        \r\n    ],\r\n    \"beginGeldigheid\": \"{{beginGeldigheid}}\",\r\n    \"eindeGeldigheid\": \"{{eindeGeldigheid}}\",\r\n    \"beginObject\": \"{{beginGeldigheid}}\",\r\n    \"eindeObject\": \"{{eindeGeldigheid}}\",\r\n    \"versiedatum\": \"{{beginGeldigheid}}\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{ztc_url}}/zaaktypen",
+                      "host": [
+                        "{{ztc_url}}"
+                      ],
+                      "path": [
+                        "zaaktypen"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "resultaattype voor expand",
+                  "event": [
+                    {
+                      "listen": "prerequest",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "const moment = require('moment');",
+                          "pm.environment.set(\"beginGeldigheid\",moment().format(\"YYYY-MM-DD\"));",
+                          "pm.environment.set(\"eindeGeldigheid\", moment().add(1,'day').format(\"YYYY-MM-DD\"));",
+                          "pm.environment.set(\"timestamp\", new Date().getTime());"
+                        ]
+                      }
+                    },
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "if (pm.response.code==201){",
+                          "    pm.environment.set(\"ztcx_resultaattype\", pm.response.json().url);",
+                          "}",
+                          "pm.test(\"Prep 2\", function () {",
+                          "    pm.response.to.have.status(201);",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n    \"omschrijving\": \"O{{timestamp}}\",\r\n    \"resultaattypeomschrijving\": \"https://referentielijsten.roxit.nl/api/v1/resultaattypeomschrijvingen/2f6e52c7-968f-4aa9-beee-d6b31365e981\",\r\n    \"selectielijstklasse\": \"https://referentielijsten.roxit.nl/api/v1/resultaten/2e86a8ca-0269-446c-8da2-6f4d08be422d\",\r\n    \"zaaktype\": \"{{ztcx_zaaktype}}\",\r\n    \"toelichting\": \"Toelichting\",\r\n    \"archiefnominatie\": \"vernietigen\",\r\n    \"archiefactietermijn\": \"P1Y\",\r\n    \"brondatumArchiefprocedure\": {\r\n        \"afleidingswijze\": \"afgehandeld\",\r\n        \"datumkenmerk\": \"\",\r\n        \"einddatumBekend\": false,\r\n        \"objecttype\": null,\r\n        \"registratie\": \"\",\r\n        \"procestermijn\": null\r\n    },\r\n    \"besluittypen\": [],\r\n    \"beginGeldigheid\": \"{{beginGeldigheid}}\",\r\n    \"eindeGeldigheid\": \"{{eindeGeldigheid}}\",\r\n    \"beginObject\": \"{{beginGeldigheid}}\",\r\n    \"eindeObject\": \"{{eindeGeldigheid}}\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{ztc_url}}/resultaattypen",
+                      "host": [
+                        "{{ztc_url}}"
+                      ],
+                      "path": [
+                        "resultaattypen"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET zaaktype expand resultaattypen",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"Expand resultaattypen op zaaktype\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "    const e = pm.response.json()._expand;",
+                          "    pm.expect(e).to.have.property('resultaattypen');",
+                          "    pm.expect(e.resultaattypen).to.be.an('array').with.lengthOf(1);",
+                          "    pm.expect(e.resultaattypen[0].url).to.eql(pm.environment.get('ztcx_resultaattype'));",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Api-version",
+                        "value": "1.4.0"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{ztcx_zaaktype}}?expand=resultaattypen",
+                      "host": [
+                        "{{ztcx_zaaktype}}"
+                      ],
+                      "query": [
+                        {
+                          "key": "expand",
+                          "value": "resultaattypen"
+                        }
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET zaaktype expand catalogus",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"Expand catalogus op zaaktype\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "    const e = pm.response.json()._expand;",
+                          "    pm.expect(e).to.have.property('catalogus');",
+                          "    pm.expect(e.catalogus.url).to.eql(pm.response.json().catalogus);",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Api-version",
+                        "value": "1.4.0"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{ztcx_zaaktype}}?expand=catalogus",
+                      "host": [
+                        "{{ztcx_zaaktype}}"
+                      ],
+                      "query": [
+                        {
+                          "key": "expand",
+                          "value": "catalogus"
+                        }
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET zaaktype expand resultaattypen en catalogus",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"Expand meerdere relaties met komma\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "    const e = pm.response.json()._expand;",
+                          "    pm.expect(e).to.have.property('resultaattypen');",
+                          "    pm.expect(e).to.have.property('catalogus');",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Api-version",
+                        "value": "1.4.0"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{ztcx_zaaktype}}?expand=resultaattypen,catalogus",
+                      "host": [
+                        "{{ztcx_zaaktype}}"
+                      ],
+                      "query": [
+                        {
+                          "key": "expand",
+                          "value": "resultaattypen,catalogus"
+                        }
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET zaaktype expand resultaattypen.selectielijstklasse",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"Expand resultaattypen.selectielijstklasse op zaaktype\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "    const rt = pm.response.json()._expand.resultaattypen[0];",
+                          "    const klasse = rt._expand.selectielijstklasse;",
+                          "    pm.expect(klasse.volledigNummer).to.be.a('string').and.not.empty;",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Api-version",
+                        "value": "1.4.0"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{ztcx_zaaktype}}?expand=resultaattypen.selectielijstklasse",
+                      "host": [
+                        "{{ztcx_zaaktype}}"
+                      ],
+                      "query": [
+                        {
+                          "key": "expand",
+                          "value": "resultaattypen.selectielijstklasse"
+                        }
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET zaaktype expand selectielijstProcestype",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"Expand selectielijstProcestype op zaaktype\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "    const p = pm.response.json()._expand.selectielijstProcestype;",
+                          "    pm.expect(p.naam).to.be.a('string').and.not.empty;",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Api-version",
+                        "value": "1.4.0"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{ztcx_zaaktype}}?expand=selectielijstProcestype",
+                      "host": [
+                        "{{ztcx_zaaktype}}"
+                      ],
+                      "query": [
+                        {
+                          "key": "expand",
+                          "value": "selectielijstProcestype"
+                        }
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET resultaattype expand selectielijstklasse",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"Expand selectielijstklasse op resultaattype\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "    const klasse = pm.response.json()._expand.selectielijstklasse;",
+                          "    pm.expect(klasse.volledigNummer).to.be.a('string').and.not.empty;",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Api-version",
+                        "value": "1.4.0"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{ztcx_resultaattype}}?expand=selectielijstklasse",
+                      "host": [
+                        "{{ztcx_resultaattype}}"
+                      ],
+                      "query": [
+                        {
+                          "key": "expand",
+                          "value": "selectielijstklasse"
+                        }
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET resultaattype expand zaaktype",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"Expand zaaktype op resultaattype\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "    const e = pm.response.json()._expand;",
+                          "    pm.expect(e.zaaktype.url).to.eql(pm.environment.get('ztcx_zaaktype'));",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Api-version",
+                        "value": "1.4.0"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{ztcx_resultaattype}}?expand=zaaktype",
+                      "host": [
+                        "{{ztcx_resultaattype}}"
+                      ],
+                      "query": [
+                        {
+                          "key": "expand",
+                          "value": "zaaktype"
+                        }
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "GET zaaktypen lijst expand catalogus",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"Expand catalogus op zaaktypen lijst\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "    const r = pm.response.json().results;",
+                          "    pm.expect(r).to.not.be.empty;",
+                          "    r.forEach(function (z) { pm.expect(z._expand.catalogus.url).to.eql(z.catalogus); });",
+                          "});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Api-version",
+                        "value": "1.4.0"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{ztc_url}}/zaaktypen?expand=catalogus&page=1",
+                      "host": [
+                        "{{ztc_url}}"
+                      ],
+                      "path": [
+                        "zaaktypen"
+                      ],
+                      "query": [
+                        {
+                          "key": "expand",
+                          "value": "catalogus"
+                        },
+                        {
+                          "key": "page",
+                          "value": "1"
+                        }
+                      ]
+                    }
+                  },
+                  "response": []
+                }
+              ]
+            }
+          ]
         }
       ]
     },
     {
       "name": "Klaar!",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Klaar! Alle tests zijn uitgevoerd\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ],
       "request": {
         "method": "GET",
-        "header": []
+        "header": [],
+        "url": {
+          "raw": "{{ztc_url}}/catalogussen?page=1",
+          "host": [
+            "{{ztc_url}}"
+          ],
+          "path": [
+            "catalogussen"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "1"
+            }
+          ]
+        }
       },
       "response": []
     }
