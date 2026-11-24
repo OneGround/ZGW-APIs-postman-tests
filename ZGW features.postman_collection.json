@@ -1,10 +1,10 @@
 {
   "info": {
-    "_postman_id": "66b2dc1d-3505-49c0-b076-feb6010cd1ff",
+    "_postman_id": "db0892eb-a8f9-4ce1-bf00-d427feade612",
     "name": "ZGW features",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "30715320",
-    "_collection_link": "https://go.postman.co/collection/30715320-66b2dc1d-3505-49c0-b076-feb6010cd1ff?source=collection_link"
+    "_collection_link": "https://go.postman.co/collection/30715320-db0892eb-a8f9-4ce1-bf00-d427feade612?source=collection_link"
   },
   "item": [
     {
@@ -13766,6 +13766,108 @@
               "name": "Voeg documenten aan de zaak toe",
               "item": [
                 {
+                  "name": "ZRC creeer zaak",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.environment.set(\"zaak_url\", pm.response.json().url);\r\n\r\n\r\npm.test(\"Prep 2\", function () {\r\n    pm.response.to.have.status(201);\r\n});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Proxy-Authorization",
+                        "value": "",
+                        "disabled": true
+                      },
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n    \"bronorganisatie\": \"{{rsin}}\",\r\n    \"omschrijving\": \"Postman test \",\r\n    \"toelichting\": \"geen toelichting\",\r\n    \"zaaktype\": \"{{zaaktype}}\",\r\n    \"registratiedatum\": \"2023-07-19\",\r\n    \"verantwoordelijkeOrganisatie\": \"{{rsin}}\",\r\n    \"startdatum\": \"2023-07-19\",\r\n    \"einddatumGepland\": null,\r\n    \"uiterlijkeEinddatumAfdoening\": \"2029-08-24\",\r\n    \"publicatiedatum\": \"2029-08-25\",\r\n    \"communicatiekanaal\": \"https://referentielijsten.roxit.nl/api/v1/communicatiekanalen/2b757868-45c2-42ca-b637-b63ddc87beb4\",\r\n    \"productenOfDiensten\": [\r\n        \"{{product_url}}\"\r\n    ],\r\n    \"vertrouwelijkheidaanduiding\": \"openbaar\",\r\n    \"betalingsindicatie\": \"geheel\",\r\n    \"laatsteBetaaldatum\": \"2019-08-24\",\r\n    \"zaakgeometrie\": {\r\n        \"type\": \"Point\",\r\n        \"coordinates\": [\r\n            51.0,\r\n            4.8\r\n        ]\r\n    },\r\n    \"verlenging\": {\r\n        \"reden\": \"het duurt te kort\",\r\n        \"duur\": \"P12D\"\r\n    },\r\n    \"opschorting\": {\r\n        \"indicatie\": true,\r\n        \"reden\": \"het is niet af\"\r\n    },\r\n    \"selectielijstklasse\": \"https://referentielijsten.roxit.nl/api/v1/resultaten/02157de3-c22c-44a0-94b1-8044edf93da8\",\r\n    \"relevanteAndereZaken\": [\r\n\r\n    ],\r\n    \"kenmerken\": [\r\n        {\r\n            \"kenmerk\": \"123\",\r\n            \"bron\": \"DSO\"\r\n        },\r\n        {\r\n            \"kenmerk\": \"456\",\r\n            \"bron\": \"OLO\"\r\n        }\r\n    ],\r\n    \"archiefnominatie\": null,\r\n    \"archiefstatus\": \"nog_te_archiveren\",\r\n    \"archiefactiedatum\": null,\r\n\r\n    \"opdrachtgevendeOrganisatie\": \"123443210\",\r\n    \"processobjectaard\": null,\r\n    \"startdatumBewaartermijn\": null,\r\n    \"processobject\": null\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{zrc_url}}/zaken",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaken"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "ZRC voeg status toe aan deze zaak",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.environment.set(\"status_url\", pm.response.json().url);\r\npm.test(\"Zaak aanmaken met valide gegevens geeft 201\", function() {\r\n    pm.response.to.have.status(201);\r\n});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Proxy-Authorization",
+                        "value": "",
+                        "disabled": true
+                      },
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n    \"zaak\": \"{{zaak_url}}\",\r\n    \"statustype\": \"{{statustype1}}\",\r\n    \"datumStatusGezet\": \"2023-12-22T10:44:46.5000576Z\",\r\n    \"statusToelichting\": \"Faseovergang naar Registreerbaarheid toetsen - status: Geaccepteerd\",\r\n    \"gezetdoor\": \"https://deburgermeester.van.eengemeente.nl\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{zrc_url}}/statussen",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "statussen"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
                   "name": "step 1 post document with inhoud",
                   "event": [
                     {
@@ -15361,6 +15463,108 @@
             {
               "name": "Voeg info toe aan laatste document",
               "item": [
+                {
+                  "name": "ZRC creeer zaak Copy",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.environment.set(\"zaak_url\", pm.response.json().url);\r\n\r\n\r\npm.test(\"Prep 2\", function () {\r\n    pm.response.to.have.status(201);\r\n});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Proxy-Authorization",
+                        "value": "",
+                        "disabled": true
+                      },
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n    \"bronorganisatie\": \"{{rsin}}\",\r\n    \"omschrijving\": \"Postman test \",\r\n    \"toelichting\": \"geen toelichting\",\r\n    \"zaaktype\": \"{{zaaktype}}\",\r\n    \"registratiedatum\": \"2023-07-19\",\r\n    \"verantwoordelijkeOrganisatie\": \"{{rsin}}\",\r\n    \"startdatum\": \"2023-07-19\",\r\n    \"einddatumGepland\": null,\r\n    \"uiterlijkeEinddatumAfdoening\": \"2029-08-24\",\r\n    \"publicatiedatum\": \"2029-08-25\",\r\n    \"communicatiekanaal\": \"https://referentielijsten.roxit.nl/api/v1/communicatiekanalen/2b757868-45c2-42ca-b637-b63ddc87beb4\",\r\n    \"productenOfDiensten\": [\r\n        \"{{product_url}}\"\r\n    ],\r\n    \"vertrouwelijkheidaanduiding\": \"openbaar\",\r\n    \"betalingsindicatie\": \"geheel\",\r\n    \"laatsteBetaaldatum\": \"2019-08-24\",\r\n    \"zaakgeometrie\": {\r\n        \"type\": \"Point\",\r\n        \"coordinates\": [\r\n            51.0,\r\n            4.8\r\n        ]\r\n    },\r\n    \"verlenging\": {\r\n        \"reden\": \"het duurt te kort\",\r\n        \"duur\": \"P12D\"\r\n    },\r\n    \"opschorting\": {\r\n        \"indicatie\": true,\r\n        \"reden\": \"het is niet af\"\r\n    },\r\n    \"selectielijstklasse\": \"https://referentielijsten.roxit.nl/api/v1/resultaten/02157de3-c22c-44a0-94b1-8044edf93da8\",\r\n    \"relevanteAndereZaken\": [\r\n\r\n    ],\r\n    \"kenmerken\": [\r\n        {\r\n            \"kenmerk\": \"123\",\r\n            \"bron\": \"DSO\"\r\n        },\r\n        {\r\n            \"kenmerk\": \"456\",\r\n            \"bron\": \"OLO\"\r\n        }\r\n    ],\r\n    \"archiefnominatie\": null,\r\n    \"archiefstatus\": \"nog_te_archiveren\",\r\n    \"archiefactiedatum\": null,\r\n\r\n    \"opdrachtgevendeOrganisatie\": \"123443210\",\r\n    \"processobjectaard\": null,\r\n    \"startdatumBewaartermijn\": null,\r\n    \"processobject\": null\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{zrc_url}}/zaken",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaken"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "ZRC voeg status toe aan deze zaak Copy",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.environment.set(\"status_url\", pm.response.json().url);\r\npm.test(\"Zaak aanmaken met valide gegevens geeft 201\", function() {\r\n    pm.response.to.have.status(201);\r\n});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Proxy-Authorization",
+                        "value": "",
+                        "disabled": true
+                      },
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n    \"zaak\": \"{{zaak_url}}\",\r\n    \"statustype\": \"{{statustype1}}\",\r\n    \"datumStatusGezet\": \"2023-12-22T10:44:46.5000576Z\",\r\n    \"statusToelichting\": \"Faseovergang naar Registreerbaarheid toetsen - status: Geaccepteerd\",\r\n    \"gezetdoor\": \"https://deburgermeester.van.eengemeente.nl\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{zrc_url}}/statussen",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "statussen"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
                 {
                   "name": "step 1 post document with inhoud",
                   "event": [
@@ -18789,611 +18993,6 @@
           "name": "ZRC 1.7",
           "item": [
             {
-              "name": "ZRC zaak expand",
-              "event": [
-                {
-                  "listen": "test",
-                  "script": {
-                    "type": "text/javascript",
-                    "exec": [
-                      "pm.test(\"Expand 3\", function () {\r\n    pm.response.to.have.status(200);\r\n});"
-                    ]
-                  }
-                }
-              ],
-              "request": {
-                "method": "GET",
-                "header": [
-                  {
-                    "key": "Proxy-Authorization",
-                    "value": "",
-                    "disabled": true
-                  },
-                  {
-                    "key": "Accept-Crs",
-                    "value": "EPSG:4326"
-                  },
-                  {
-                    "key": "Api-version",
-                    "value": "1.7.0"
-                  }
-                ],
-                "url": {
-                  "raw": "{{zaak_url2}}?expand=selectielijstklasse",
-                  "host": [
-                    "{{zaak_url2}}"
-                  ],
-                  "query": [
-                    {
-                      "key": "identificatie",
-                      "value": "https://catalogi-mega1.mega.local/api/v1/zaaktypen/9d0d3caa-6eb2-421a-8b22-80505ccf985e",
-                      "disabled": true
-                    },
-                    {
-                      "key": "expand",
-                      "value": "rollen",
-                      "disabled": true
-                    },
-                    {
-                      "key": "expand",
-                      "value": "status",
-                      "disabled": true
-                    },
-                    {
-                      "key": "expand",
-                      "value": "zaaktype",
-                      "disabled": true
-                    },
-                    {
-                      "key": "expand",
-                      "value": "hoofdzaak",
-                      "disabled": true
-                    },
-                    {
-                      "key": "expand",
-                      "value": "deelzaken",
-                      "disabled": true
-                    },
-                    {
-                      "key": "expand",
-                      "value": "zaakinformatieobjecten",
-                      "disabled": true
-                    },
-                    {
-                      "key": "expand",
-                      "value": "zaakobjecten",
-                      "disabled": true
-                    },
-                    {
-                      "key": "expand",
-                      "value": "resultaat.resultaattype",
-                      "disabled": true
-                    },
-                    {
-                      "key": "expand",
-                      "value": "relevanteAndereZaken,eigenschappen",
-                      "disabled": true
-                    },
-                    {
-                      "key": "expand",
-                      "value": "eigenschappen",
-                      "disabled": true
-                    },
-                    {
-                      "key": "expand",
-                      "value": "selectielijstklasse"
-                    }
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "ZRC zoek expand",
-              "event": [
-                {
-                  "listen": "test",
-                  "script": {
-                    "type": "text/javascript",
-                    "exec": [
-                      "pm.test(\"Filter zaak 1\", function () {\r\n    pm.response.to.have.status(200);\r\n    pm.expect(pm.response.json().count).to.be.above(0);\r\n});"
-                    ]
-                  }
-                }
-              ],
-              "request": {
-                "method": "POST",
-                "header": [
-                  {
-                    "key": "Proxy-Authorization",
-                    "value": "",
-                    "disabled": true
-                  },
-                  {
-                    "key": "Accept-Crs",
-                    "value": "EPSG:4326"
-                  },
-                  {
-                    "key": "Content-Crs",
-                    "value": "EPSG:4326"
-                  },
-                  {
-                    "key": "Api-version",
-                    "value": "1.7"
-                  }
-                ],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\r\n    \"uuid__in\": [\r\n        \"{{zaak_uuid}}\"\r\n    ],\r\n    \"fields\": [\r\n        \"identificatie\",\r\n        {\r\n            \"zaakinformatieobjecten\": [\r\n                {\r\n                    \"informatieobject\": [\r\n                        {\r\n                            \"informatieobjecttype\": [\r\n                                \"omschrijving\"\r\n                            ]\r\n                        }\r\n                    ]\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{zrc_url}}/zaken/_zoek",
-                  "host": [
-                    "{{zrc_url}}"
-                  ],
-                  "path": [
-                    "zaken",
-                    "_zoek"
-                  ],
-                  "query": [
-                    {
-                      "key": "identificatie",
-                      "value": "{{zaak_identificatie}}",
-                      "disabled": true
-                    },
-                    {
-                      "key": "bronorganisatie",
-                      "value": "{{rsin}}",
-                      "disabled": true
-                    },
-                    {
-                      "key": "bronorganisatie__in",
-                      "value": "{{rsin}},123443210",
-                      "disabled": true
-                    },
-                    {
-                      "key": "zaaktype",
-                      "value": "{{zaaktype}}",
-                      "disabled": true
-                    },
-                    {
-                      "key": "archiefnominatie",
-                      "value": "blijvend_bewaren",
-                      "disabled": true
-                    },
-                    {
-                      "key": "archiefnominatie__in",
-                      "value": "blijvend_bewaren,vernietigen",
-                      "disabled": true
-                    },
-                    {
-                      "key": "archiefactiedatum",
-                      "value": "2031-06-09",
-                      "disabled": true
-                    },
-                    {
-                      "key": "archiefactiedatum__isnull",
-                      "value": "true",
-                      "disabled": true
-                    },
-                    {
-                      "key": "archiefactiedatum__lt",
-                      "value": "2031-06-09",
-                      "disabled": true
-                    },
-                    {
-                      "key": "archiefactiedatum__gt",
-                      "value": "2031-06-09",
-                      "disabled": true
-                    },
-                    {
-                      "key": "archiefstatus",
-                      "value": "gearchiveerd",
-                      "disabled": true
-                    },
-                    {
-                      "key": "archiefstatus__in",
-                      "value": "gearchiveerd,overgedragen",
-                      "disabled": true
-                    },
-                    {
-                      "key": "startdatum",
-                      "value": "2023-07-19",
-                      "disabled": true
-                    },
-                    {
-                      "key": "startdatum__gt",
-                      "value": "2023-07-19",
-                      "disabled": true
-                    },
-                    {
-                      "key": "startdatum__gte",
-                      "value": "2023-07-19",
-                      "disabled": true
-                    },
-                    {
-                      "key": "startdatum__lt",
-                      "value": "2023-07-19",
-                      "disabled": true
-                    },
-                    {
-                      "key": "startdatum__lte",
-                      "value": "2023-07-19",
-                      "disabled": true
-                    },
-                    {
-                      "key": "registratiedatum",
-                      "value": "2023-07-19",
-                      "disabled": true
-                    },
-                    {
-                      "key": "registratiedatum__gt",
-                      "value": "2023-07-19",
-                      "disabled": true
-                    },
-                    {
-                      "key": "registratiedatum__lt",
-                      "value": "2023-07-19",
-                      "disabled": true
-                    },
-                    {
-                      "key": "einddatum",
-                      "value": "2024-01-16",
-                      "disabled": true
-                    },
-                    {
-                      "key": "einddatum__isnull",
-                      "value": "true",
-                      "disabled": true
-                    },
-                    {
-                      "key": "einddatum__lt",
-                      "value": "2024-01-16",
-                      "disabled": true
-                    },
-                    {
-                      "key": "einddatum__gt",
-                      "value": "2024-01-16",
-                      "disabled": true
-                    },
-                    {
-                      "key": "einddatumGepland",
-                      "value": "2019-04-20",
-                      "disabled": true
-                    },
-                    {
-                      "key": "einddatumGepland__lt",
-                      "value": "2019-04-20",
-                      "disabled": true
-                    },
-                    {
-                      "key": "einddatumGepland__gt",
-                      "value": "2019-04-20",
-                      "disabled": true
-                    },
-                    {
-                      "key": "uiterlijkeEinddatumAfdoening",
-                      "value": "2019-04-09",
-                      "disabled": true
-                    },
-                    {
-                      "key": "uiterlijkeEinddatumAfdoening__gt",
-                      "value": "2019-04-09",
-                      "disabled": true
-                    },
-                    {
-                      "key": "uiterlijkeEinddatumAfdoening__lt",
-                      "value": "2019-04-09",
-                      "disabled": true
-                    },
-                    {
-                      "key": "rol__betrokkeneType",
-                      "value": "natuurlijk_persoon",
-                      "disabled": true
-                    },
-                    {
-                      "key": "rol__betrokkene",
-                      "value": "{{rol_url}}",
-                      "disabled": true
-                    },
-                    {
-                      "key": "rol__omschrijvingGeneriek",
-                      "value": "belanghebbende",
-                      "disabled": true
-                    },
-                    {
-                      "key": "maximaleVertrouwelijkheidaanduiding",
-                      "value": "intern",
-                      "disabled": true
-                    },
-                    {
-                      "key": "rol__betrokkeneIdentificatie__natuurlijkPersoon__inpBsn",
-                      "value": "{{inpBsn}}",
-                      "disabled": true
-                    },
-                    {
-                      "key": "rol__betrokkeneIdentificatie__natuurlijkPersoon__anpIdentificatie",
-                      "value": "{{anpIdentificatie}}",
-                      "disabled": true
-                    },
-                    {
-                      "key": "rol__betrokkeneIdentificatie__natuurlijkPersoon__inpA_nummer",
-                      "value": "{{inpA_nummer}}",
-                      "disabled": true
-                    },
-                    {
-                      "key": "rol__betrokkeneIdentificatie__nietNatuurlijkPersoon__annIdentificatie",
-                      "value": "{{annIdentificatie}}",
-                      "disabled": true
-                    },
-                    {
-                      "key": "rol__betrokkeneIdentificatie__nietNatuurlijkPersoon__innNnpId",
-                      "value": "{{innNnpId}}",
-                      "disabled": true
-                    },
-                    {
-                      "key": "rol__betrokkeneIdentificatie__vestiging__vestigingsNummer",
-                      "value": "{{vestigingsNummer}}",
-                      "disabled": true
-                    },
-                    {
-                      "key": "rol__betrokkeneIdentificatie__medewerker__identificatie",
-                      "value": "{{MDWidentificatie}}",
-                      "disabled": true
-                    },
-                    {
-                      "key": "rol__betrokkeneIdentificatie__organisatorischeEenheid__identificatie",
-                      "value": "{{OEHidentifiicatie}}",
-                      "disabled": true
-                    }
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "ZRC zoek expand selectielijstProcestype naam",
-              "event": [
-                {
-                  "listen": "test",
-                  "script": {
-                    "type": "text/javascript",
-                    "exec": [
-                      "pm.test(\"Zoek met fields: zaak.zaaktype.selectielijstProcestype.naam\", function () {",
-                      "    pm.response.to.have.status(200);",
-                      "    const b = pm.response.json();",
-                      "    pm.expect(b.count).to.be.above(0);",
-                      "    const zaaktype = b.results[0]._expand.zaaktype;",
-                      "    const procestype = zaaktype._expand.selectielijstProcestype;",
-                      "    pm.expect(procestype.naam).to.be.a('string').and.not.empty;",
-                      "});"
-                    ]
-                  }
-                }
-              ],
-              "request": {
-                "method": "POST",
-                "header": [
-                  {
-                    "key": "Accept-Crs",
-                    "value": "EPSG:4326"
-                  },
-                  {
-                    "key": "Content-Crs",
-                    "value": "EPSG:4326"
-                  },
-                  {
-                    "key": "Api-version",
-                    "value": "1.7"
-                  }
-                ],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n    \"uuid__in\": [\n        \"{{zaak_uuid}}\"\n    ],\n    \"fields\": [\n        \"identificatie\",\n        {\n            \"zaaktype\": [\n                {\n                    \"selectielijstProcestype\": [\n                        \"naam\"\n                    ]\n                }\n            ]\n        }\n    ]\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{zrc_url}}/zaken/_zoek",
-                  "host": [
-                    "{{zrc_url}}"
-                  ],
-                  "path": [
-                    "zaken",
-                    "_zoek"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "ZRC zoek expand selectielijstklasse volledigNummer",
-              "event": [
-                {
-                  "listen": "prerequest",
-                  "script": {
-                    "type": "text/javascript",
-                    "exec": [
-                      "// zaak uit ZGW 1.5 / ZRC zaak zoekopties, deze heeft een resultaat",
-                      "pm.environment.set(\"zaak_zoeken_uuid\", pm.environment.get(\"zaak_zoeken_url\").split(\"/\").pop());"
-                    ]
-                  }
-                },
-                {
-                  "listen": "test",
-                  "script": {
-                    "type": "text/javascript",
-                    "exec": [
-                      "pm.test(\"Zoek met fields: zaak.resultaat.resultaattype.selectielijstklasse.volledigNummer\", function () {",
-                      "    pm.response.to.have.status(200);",
-                      "    const b = pm.response.json();",
-                      "    pm.expect(b.count).to.be.above(0);",
-                      "    const resultaattype = b.results[0]._expand.resultaat._expand.resultaattype;",
-                      "    const klasse = resultaattype._expand.selectielijstklasse;",
-                      "    pm.expect(klasse.volledigNummer).to.be.a(\"string\").and.not.empty;",
-                      "});"
-                    ]
-                  }
-                }
-              ],
-              "request": {
-                "method": "POST",
-                "header": [
-                  {
-                    "key": "Accept-Crs",
-                    "value": "EPSG:4326"
-                  },
-                  {
-                    "key": "Content-Crs",
-                    "value": "EPSG:4326"
-                  },
-                  {
-                    "key": "Api-version",
-                    "value": "1.7"
-                  }
-                ],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n    \"uuid__in\": [\n        \"{{zaak_zoeken_uuid}}\"\n    ],\n    \"fields\": [\n        \"identificatie\",\n        {\n            \"resultaat\": [\n                {\n                    \"resultaattype\": [\n                        {\n                            \"selectielijstklasse\": [\n                                \"volledigNummer\"\n                            ]\n                        }\n                    ]\n                }\n            ]\n        }\n    ]\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{zrc_url}}/zaken/_zoek",
-                  "host": [
-                    "{{zrc_url}}"
-                  ],
-                  "path": [
-                    "zaken",
-                    "_zoek"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "ZRC voeg rol met medewerker  toe aan deze zaak",
-              "event": [
-                {
-                  "listen": "test",
-                  "script": {
-                    "type": "text/javascript",
-                    "exec": [
-                      "pm.test(\"Medewerker can have large identification (at least a guid)\", function () {\r\n    pm.response.to.have.status(201);\r\n});"
-                    ]
-                  }
-                }
-              ],
-              "request": {
-                "method": "POST",
-                "header": [
-                  {
-                    "key": "Proxy-Authorization",
-                    "value": "",
-                    "disabled": true
-                  },
-                  {
-                    "key": "Accept-Crs",
-                    "value": "EPSG:4326"
-                  },
-                  {
-                    "key": "Content-Crs",
-                    "value": "EPSG:4326"
-                  },
-                  {
-                    "key": "api-version",
-                    "value": "1.7.0",
-                    "disabled": true
-                  }
-                ],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\r\n    \"zaak\": \"{{zaak_url}}\",\r\n    \"betrokkene\": \"http://example.com\",\r\n    \"betrokkeneType\": \"medewerker\",\r\n    \"afwijkendeNaamBetrokkene\": \"string\",\r\n    \"roltype\": \"{{roltype}}\",\r\n    \"roltoelichting\": \"string\",\r\n    \"indicatieMachtiging\": \"gemachtigde\",\r\n    \"contactpersoonRol\": {\r\n        \"emailadres\": \"user@example.com\",\r\n        \"functie\": \"string\",\r\n        \"telefoonnummer\": \"string\",\r\n        \"naam\": \"string\"\r\n    },\r\n    \"betrokkeneIdentificatie\": {\r\n        \"identificatie\": \"96d2cc7b-7bd6-490f-9a37-791b80ef9d48\",\r\n        \"achternaam\": \"string\",\r\n        \"voorletters\": \"string\",\r\n        \"voorvoegselAchternaam\": \"string\"\r\n    }\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{zrc_url}}/rollen",
-                  "host": [
-                    "{{zrc_url}}"
-                  ],
-                  "path": [
-                    "rollen"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "ZRC reserveer zaaknummer",
-              "event": [
-                {
-                  "listen": "test",
-                  "script": {
-                    "type": "text/javascript",
-                    "exec": [
-                      "pm.test(\"Prep 5\", function () {\r\n    pm.response.to.have.status(201);\r\n});"
-                    ]
-                  }
-                }
-              ],
-              "request": {
-                "method": "POST",
-                "header": [
-                  {
-                    "key": "Proxy-Authorization",
-                    "value": "",
-                    "disabled": true
-                  },
-                  {
-                    "key": "Accept-Crs",
-                    "value": "EPSG:4326"
-                  },
-                  {
-                    "key": "Content-Crs",
-                    "value": "EPSG:4326"
-                  },
-                  {
-                    "key": "api-version",
-                    "value": "1.7.0"
-                  }
-                ],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\r\n    \"bronorganisatie\": \"809266660\",\r\n  \"aantal\": 10\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{zrc_url}}/zaaknummer_reserveren",
-                  "host": [
-                    "{{zrc_url}}"
-                  ],
-                  "path": [
-                    "zaaknummer_reserveren"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
               "name": "ZRC zaaknotities",
               "item": [
                 {
@@ -19608,15 +19207,6 @@
                         "value": "application/json"
                       }
                     ],
-                    "url": {
-                      "raw": "{{zrc_url}}/zaaknotities",
-                      "host": [
-                        "{{zrc_url}}"
-                      ],
-                      "path": [
-                        "zaaknotities"
-                      ]
-                    },
                     "body": {
                       "mode": "raw",
                       "raw": "{\n    \"gerelateerdAan\": \"{{zn_zaak_url}}\",\n    \"onderwerp\": \"Postman notitie {{timestamp}}\",\n    \"tekst\": \"Tekst van de testnotitie\",\n    \"aangemaaktDoor\": \"Postman\",\n    \"notitieType\": \"intern\",\n    \"status\": \"concept\"\n}",
@@ -19625,6 +19215,15 @@
                           "language": "json"
                         }
                       }
+                    },
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ]
                     }
                   },
                   "response": []
@@ -19676,15 +19275,6 @@
                         "value": "application/json"
                       }
                     ],
-                    "url": {
-                      "raw": "{{zrc_url}}/zaaknotities",
-                      "host": [
-                        "{{zrc_url}}"
-                      ],
-                      "path": [
-                        "zaaknotities"
-                      ]
-                    },
                     "body": {
                       "mode": "raw",
                       "raw": "{\n    \"gerelateerdAan\": \"{{zn_zaak_url}}\",\n    \"onderwerp\": \"Postman definitieve notitie {{timestamp}}\",\n    \"tekst\": \"Tekst van de testnotitie\",\n    \"aangemaaktDoor\": \"Postman\",\n    \"notitieType\": \"extern\",\n    \"status\": \"definitief\"\n}",
@@ -19693,6 +19283,15 @@
                           "language": "json"
                         }
                       }
+                    },
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ]
                     }
                   },
                   "response": []
@@ -19739,15 +19338,6 @@
                         "value": "application/json"
                       }
                     ],
-                    "url": {
-                      "raw": "{{zrc_url}}/zaaknotities",
-                      "host": [
-                        "{{zrc_url}}"
-                      ],
-                      "path": [
-                        "zaaknotities"
-                      ]
-                    },
                     "body": {
                       "mode": "raw",
                       "raw": "{\n    \"gerelateerdAan\": \"{{zn_zaak_url}}\",\n    \"onderwerp\": \"Alleen verplicht {{timestamp}}\",\n    \"tekst\": \"Minimale notitie\"\n}",
@@ -19756,6 +19346,15 @@
                           "language": "json"
                         }
                       }
+                    },
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ]
                     }
                   },
                   "response": []
@@ -19797,15 +19396,6 @@
                         "value": "application/json"
                       }
                     ],
-                    "url": {
-                      "raw": "{{zrc_url}}/zaaknotities",
-                      "host": [
-                        "{{zrc_url}}"
-                      ],
-                      "path": [
-                        "zaaknotities"
-                      ]
-                    },
                     "body": {
                       "mode": "raw",
                       "raw": "{\n    \"gerelateerdAan\": \"{{zn_zaak_url}}\",\n    \"tekst\": \"x\"\n}",
@@ -19814,6 +19404,15 @@
                           "language": "json"
                         }
                       }
+                    },
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ]
                     }
                   },
                   "response": []
@@ -19855,15 +19454,6 @@
                         "value": "application/json"
                       }
                     ],
-                    "url": {
-                      "raw": "{{zrc_url}}/zaaknotities",
-                      "host": [
-                        "{{zrc_url}}"
-                      ],
-                      "path": [
-                        "zaaknotities"
-                      ]
-                    },
                     "body": {
                       "mode": "raw",
                       "raw": "{\n    \"gerelateerdAan\": \"{{zn_zaak_url}}\",\n    \"onderwerp\": \"x\"\n}",
@@ -19872,6 +19462,15 @@
                           "language": "json"
                         }
                       }
+                    },
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ]
                     }
                   },
                   "response": []
@@ -19913,15 +19512,6 @@
                         "value": "application/json"
                       }
                     ],
-                    "url": {
-                      "raw": "{{zrc_url}}/zaaknotities",
-                      "host": [
-                        "{{zrc_url}}"
-                      ],
-                      "path": [
-                        "zaaknotities"
-                      ]
-                    },
                     "body": {
                       "mode": "raw",
                       "raw": "{\n    \"onderwerp\": \"x\",\n    \"tekst\": \"x\"\n}",
@@ -19930,6 +19520,15 @@
                           "language": "json"
                         }
                       }
+                    },
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ]
                     }
                   },
                   "response": []
@@ -19971,15 +19570,6 @@
                         "value": "application/json"
                       }
                     ],
-                    "url": {
-                      "raw": "{{zrc_url}}/zaaknotities",
-                      "host": [
-                        "{{zrc_url}}"
-                      ],
-                      "path": [
-                        "zaaknotities"
-                      ]
-                    },
                     "body": {
                       "mode": "raw",
                       "raw": "{}",
@@ -19988,6 +19578,15 @@
                           "language": "json"
                         }
                       }
+                    },
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ]
                     }
                   },
                   "response": []
@@ -20029,15 +19628,6 @@
                         "value": "application/json"
                       }
                     ],
-                    "url": {
-                      "raw": "{{zrc_url}}/zaaknotities",
-                      "host": [
-                        "{{zrc_url}}"
-                      ],
-                      "path": [
-                        "zaaknotities"
-                      ]
-                    },
                     "body": {
                       "mode": "raw",
                       "raw": "{\n    \"gerelateerdAan\": \"{{zn_zaak_url}}\",\n    \"onderwerp\": \"Postman notitie {{timestamp}}\",\n    \"tekst\": \"Tekst van de testnotitie\",\n    \"aangemaaktDoor\": \"Postman\",\n    \"notitieType\": \"geheim\",\n    \"status\": \"concept\"\n}",
@@ -20046,6 +19636,15 @@
                           "language": "json"
                         }
                       }
+                    },
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ]
                     }
                   },
                   "response": []
@@ -20087,15 +19686,6 @@
                         "value": "application/json"
                       }
                     ],
-                    "url": {
-                      "raw": "{{zrc_url}}/zaaknotities",
-                      "host": [
-                        "{{zrc_url}}"
-                      ],
-                      "path": [
-                        "zaaknotities"
-                      ]
-                    },
                     "body": {
                       "mode": "raw",
                       "raw": "{\n    \"gerelateerdAan\": \"{{zn_zaak_url}}\",\n    \"onderwerp\": \"Postman notitie {{timestamp}}\",\n    \"tekst\": \"Tekst van de testnotitie\",\n    \"aangemaaktDoor\": \"Postman\",\n    \"notitieType\": \"intern\",\n    \"status\": \"afgerond\"\n}",
@@ -20104,6 +19694,15 @@
                           "language": "json"
                         }
                       }
+                    },
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ]
                     }
                   },
                   "response": []
@@ -20145,15 +19744,6 @@
                         "value": "application/json"
                       }
                     ],
-                    "url": {
-                      "raw": "{{zrc_url}}/zaaknotities",
-                      "host": [
-                        "{{zrc_url}}"
-                      ],
-                      "path": [
-                        "zaaknotities"
-                      ]
-                    },
                     "body": {
                       "mode": "raw",
                       "raw": "{\n    \"gerelateerdAan\": \"{{zn_zaak_url}}\",\n    \"onderwerp\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\n    \"tekst\": \"Tekst van de testnotitie\",\n    \"aangemaaktDoor\": \"Postman\",\n    \"notitieType\": \"intern\",\n    \"status\": \"concept\"\n}",
@@ -20162,6 +19752,15 @@
                           "language": "json"
                         }
                       }
+                    },
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ]
                     }
                   },
                   "response": []
@@ -20203,15 +19802,6 @@
                         "value": "application/json"
                       }
                     ],
-                    "url": {
-                      "raw": "{{zrc_url}}/zaaknotities",
-                      "host": [
-                        "{{zrc_url}}"
-                      ],
-                      "path": [
-                        "zaaknotities"
-                      ]
-                    },
                     "body": {
                       "mode": "raw",
                       "raw": "{\n    \"gerelateerdAan\": \"geen-url\",\n    \"onderwerp\": \"Postman notitie {{timestamp}}\",\n    \"tekst\": \"Tekst van de testnotitie\",\n    \"aangemaaktDoor\": \"Postman\",\n    \"notitieType\": \"intern\",\n    \"status\": \"concept\"\n}",
@@ -20220,6 +19810,15 @@
                           "language": "json"
                         }
                       }
+                    },
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ]
                     }
                   },
                   "response": []
@@ -20261,15 +19860,6 @@
                         "value": "application/json"
                       }
                     ],
-                    "url": {
-                      "raw": "{{zrc_url}}/zaaknotities",
-                      "host": [
-                        "{{zrc_url}}"
-                      ],
-                      "path": [
-                        "zaaknotities"
-                      ]
-                    },
                     "body": {
                       "mode": "raw",
                       "raw": "{\n    \"gerelateerdAan\": \"{{zrc_url}}/zaken/00000000-0000-0000-0000-000000000000\",\n    \"onderwerp\": \"Postman notitie {{timestamp}}\",\n    \"tekst\": \"Tekst van de testnotitie\",\n    \"aangemaaktDoor\": \"Postman\",\n    \"notitieType\": \"intern\",\n    \"status\": \"concept\"\n}",
@@ -20278,6 +19868,15 @@
                           "language": "json"
                         }
                       }
+                    },
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ]
                     }
                   },
                   "response": []
@@ -20298,6 +19897,9 @@
                     }
                   ],
                   "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
                     "method": "POST",
                     "header": [
                       {
@@ -20313,18 +19915,6 @@
                         "value": "application/json"
                       }
                     ],
-                    "url": {
-                      "raw": "{{zrc_url}}/zaaknotities",
-                      "host": [
-                        "{{zrc_url}}"
-                      ],
-                      "path": [
-                        "zaaknotities"
-                      ]
-                    },
-                    "auth": {
-                      "type": "noauth"
-                    },
                     "body": {
                       "mode": "raw",
                       "raw": "{\n    \"gerelateerdAan\": \"{{zn_zaak_url}}\",\n    \"onderwerp\": \"Postman notitie {{timestamp}}\",\n    \"tekst\": \"Tekst van de testnotitie\",\n    \"aangemaaktDoor\": \"Postman\",\n    \"notitieType\": \"intern\",\n    \"status\": \"concept\"\n}",
@@ -20333,6 +19923,15 @@
                           "language": "json"
                         }
                       }
+                    },
+                    "url": {
+                      "raw": "{{zrc_url}}/zaaknotities",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "zaaknotities"
+                      ]
                     }
                   },
                   "response": []
@@ -21307,6 +20906,9 @@
                     }
                   ],
                   "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
                     "method": "GET",
                     "header": [
                       {
@@ -21326,9 +20928,6 @@
                       "path": [
                         "zaaknotities"
                       ]
-                    },
-                    "auth": {
-                      "type": "noauth"
                     }
                   },
                   "response": []
@@ -21488,6 +21087,9 @@
                     }
                   ],
                   "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
                     "method": "GET",
                     "header": [
                       {
@@ -21504,9 +21106,6 @@
                       "host": [
                         "{{zn_url}}"
                       ]
-                    },
-                    "auth": {
-                      "type": "noauth"
                     }
                   },
                   "response": []
@@ -21569,12 +21168,6 @@
                         "value": "application/json"
                       }
                     ],
-                    "url": {
-                      "raw": "{{zn_url}}",
-                      "host": [
-                        "{{zn_url}}"
-                      ]
-                    },
                     "body": {
                       "mode": "raw",
                       "raw": "{\n    \"gerelateerdAan\": \"{{zn_zaak_url}}\",\n    \"onderwerp\": \"Bijgewerkt via PUT {{timestamp}}\",\n    \"tekst\": \"Tekst na PUT\",\n    \"aangemaaktDoor\": \"Postman\",\n    \"notitieType\": \"extern\",\n    \"status\": \"concept\"\n}",
@@ -21583,6 +21176,12 @@
                           "language": "json"
                         }
                       }
+                    },
+                    "url": {
+                      "raw": "{{zn_url}}",
+                      "host": [
+                        "{{zn_url}}"
+                      ]
                     }
                   },
                   "response": []
@@ -21666,12 +21265,6 @@
                         "value": "application/json"
                       }
                     ],
-                    "url": {
-                      "raw": "{{zn_url}}",
-                      "host": [
-                        "{{zn_url}}"
-                      ]
-                    },
                     "body": {
                       "mode": "raw",
                       "raw": "{\n    \"onderwerp\": \"alleen onderwerp\"\n}",
@@ -21680,6 +21273,12 @@
                           "language": "json"
                         }
                       }
+                    },
+                    "url": {
+                      "raw": "{{zn_url}}",
+                      "host": [
+                        "{{zn_url}}"
+                      ]
                     }
                   },
                   "response": []
@@ -21721,12 +21320,6 @@
                         "value": "application/json"
                       }
                     ],
-                    "url": {
-                      "raw": "{{zn_url}}",
-                      "host": [
-                        "{{zn_url}}"
-                      ]
-                    },
                     "body": {
                       "mode": "raw",
                       "raw": "{\n    \"gerelateerdAan\": \"{{zn_zaak_url}}\",\n    \"onderwerp\": \"Bijgewerkt via PUT {{timestamp}}\",\n    \"tekst\": \"Tekst na PUT\",\n    \"aangemaaktDoor\": \"Postman\",\n    \"notitieType\": \"geheim\",\n    \"status\": \"concept\"\n}",
@@ -21735,6 +21328,12 @@
                           "language": "json"
                         }
                       }
+                    },
+                    "url": {
+                      "raw": "{{zn_url}}",
+                      "host": [
+                        "{{zn_url}}"
+                      ]
                     }
                   },
                   "response": []
@@ -21775,6 +21374,15 @@
                         "value": "application/json"
                       }
                     ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"gerelateerdAan\": \"{{zn_zaak_url}}\",\n    \"onderwerp\": \"Bijgewerkt via PUT {{timestamp}}\",\n    \"tekst\": \"Tekst na PUT\",\n    \"aangemaaktDoor\": \"Postman\",\n    \"notitieType\": \"extern\",\n    \"status\": \"concept\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
                     "url": {
                       "raw": "{{zrc_url}}/zaaknotities/00000000-0000-0000-0000-000000000000",
                       "host": [
@@ -21784,15 +21392,6 @@
                         "zaaknotities",
                         "00000000-0000-0000-0000-000000000000"
                       ]
-                    },
-                    "body": {
-                      "mode": "raw",
-                      "raw": "{\n    \"gerelateerdAan\": \"{{zn_zaak_url}}\",\n    \"onderwerp\": \"Bijgewerkt via PUT {{timestamp}}\",\n    \"tekst\": \"Tekst na PUT\",\n    \"aangemaaktDoor\": \"Postman\",\n    \"notitieType\": \"extern\",\n    \"status\": \"concept\"\n}",
-                      "options": {
-                        "raw": {
-                          "language": "json"
-                        }
-                      }
                     }
                   },
                   "response": []
@@ -21828,12 +21427,6 @@
                         "value": "application/json"
                       }
                     ],
-                    "url": {
-                      "raw": "{{zn_def_url}}",
-                      "host": [
-                        "{{zn_def_url}}"
-                      ]
-                    },
                     "body": {
                       "mode": "raw",
                       "raw": "{\n    \"gerelateerdAan\": \"{{zn_zaak_url}}\",\n    \"onderwerp\": \"Bijgewerkt via PUT {{timestamp}}\",\n    \"tekst\": \"Tekst na PUT\",\n    \"aangemaaktDoor\": \"Postman\",\n    \"notitieType\": \"extern\",\n    \"status\": \"definitief\"\n}",
@@ -21842,6 +21435,12 @@
                           "language": "json"
                         }
                       }
+                    },
+                    "url": {
+                      "raw": "{{zn_def_url}}",
+                      "host": [
+                        "{{zn_def_url}}"
+                      ]
                     }
                   },
                   "response": []
@@ -21862,6 +21461,9 @@
                     }
                   ],
                   "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
                     "method": "PUT",
                     "header": [
                       {
@@ -21877,15 +21479,6 @@
                         "value": "application/json"
                       }
                     ],
-                    "url": {
-                      "raw": "{{zn_url}}",
-                      "host": [
-                        "{{zn_url}}"
-                      ]
-                    },
-                    "auth": {
-                      "type": "noauth"
-                    },
                     "body": {
                       "mode": "raw",
                       "raw": "{\n    \"gerelateerdAan\": \"{{zn_zaak_url}}\",\n    \"onderwerp\": \"Bijgewerkt via PUT {{timestamp}}\",\n    \"tekst\": \"Tekst na PUT\",\n    \"aangemaaktDoor\": \"Postman\",\n    \"notitieType\": \"extern\",\n    \"status\": \"concept\"\n}",
@@ -21894,6 +21487,12 @@
                           "language": "json"
                         }
                       }
+                    },
+                    "url": {
+                      "raw": "{{zn_url}}",
+                      "host": [
+                        "{{zn_url}}"
+                      ]
                     }
                   },
                   "response": []
@@ -21945,12 +21544,6 @@
                         "value": "application/json"
                       }
                     ],
-                    "url": {
-                      "raw": "{{zn_url}}",
-                      "host": [
-                        "{{zn_url}}"
-                      ]
-                    },
                     "body": {
                       "mode": "raw",
                       "raw": "{\n    \"tekst\": \"Tekst na PATCH\"\n}",
@@ -21959,6 +21552,12 @@
                           "language": "json"
                         }
                       }
+                    },
+                    "url": {
+                      "raw": "{{zn_url}}",
+                      "host": [
+                        "{{zn_url}}"
+                      ]
                     }
                   },
                   "response": []
@@ -21998,12 +21597,6 @@
                         "value": "application/json"
                       }
                     ],
-                    "url": {
-                      "raw": "{{zn_url}}",
-                      "host": [
-                        "{{zn_url}}"
-                      ]
-                    },
                     "body": {
                       "mode": "raw",
                       "raw": "{}",
@@ -22012,6 +21605,12 @@
                           "language": "json"
                         }
                       }
+                    },
+                    "url": {
+                      "raw": "{{zn_url}}",
+                      "host": [
+                        "{{zn_url}}"
+                      ]
                     }
                   },
                   "response": []
@@ -22053,12 +21652,6 @@
                         "value": "application/json"
                       }
                     ],
-                    "url": {
-                      "raw": "{{zn_url}}",
-                      "host": [
-                        "{{zn_url}}"
-                      ]
-                    },
                     "body": {
                       "mode": "raw",
                       "raw": "{\n    \"status\": \"afgerond\"\n}",
@@ -22067,6 +21660,12 @@
                           "language": "json"
                         }
                       }
+                    },
+                    "url": {
+                      "raw": "{{zn_url}}",
+                      "host": [
+                        "{{zn_url}}"
+                      ]
                     }
                   },
                   "response": []
@@ -22108,12 +21707,6 @@
                         "value": "application/json"
                       }
                     ],
-                    "url": {
-                      "raw": "{{zn_url}}",
-                      "host": [
-                        "{{zn_url}}"
-                      ]
-                    },
                     "body": {
                       "mode": "raw",
                       "raw": "{\n    \"onderwerp\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n}",
@@ -22122,6 +21715,12 @@
                           "language": "json"
                         }
                       }
+                    },
+                    "url": {
+                      "raw": "{{zn_url}}",
+                      "host": [
+                        "{{zn_url}}"
+                      ]
                     }
                   },
                   "response": []
@@ -22163,12 +21762,6 @@
                         "value": "application/json"
                       }
                     ],
-                    "url": {
-                      "raw": "{{zn_url}}",
-                      "host": [
-                        "{{zn_url}}"
-                      ]
-                    },
                     "body": {
                       "mode": "raw",
                       "raw": "{\n    \"tekst\": \"\"\n}",
@@ -22177,6 +21770,12 @@
                           "language": "json"
                         }
                       }
+                    },
+                    "url": {
+                      "raw": "{{zn_url}}",
+                      "host": [
+                        "{{zn_url}}"
+                      ]
                     }
                   },
                   "response": []
@@ -22217,6 +21816,15 @@
                         "value": "application/json"
                       }
                     ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"tekst\": \"x\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
                     "url": {
                       "raw": "{{zrc_url}}/zaaknotities/00000000-0000-0000-0000-000000000000",
                       "host": [
@@ -22226,15 +21834,6 @@
                         "zaaknotities",
                         "00000000-0000-0000-0000-000000000000"
                       ]
-                    },
-                    "body": {
-                      "mode": "raw",
-                      "raw": "{\n    \"tekst\": \"x\"\n}",
-                      "options": {
-                        "raw": {
-                          "language": "json"
-                        }
-                      }
                     }
                   },
                   "response": []
@@ -22255,6 +21854,9 @@
                     }
                   ],
                   "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
                     "method": "PATCH",
                     "header": [
                       {
@@ -22270,15 +21872,6 @@
                         "value": "application/json"
                       }
                     ],
-                    "url": {
-                      "raw": "{{zn_url}}",
-                      "host": [
-                        "{{zn_url}}"
-                      ]
-                    },
-                    "auth": {
-                      "type": "noauth"
-                    },
                     "body": {
                       "mode": "raw",
                       "raw": "{\n    \"tekst\": \"x\"\n}",
@@ -22287,6 +21880,12 @@
                           "language": "json"
                         }
                       }
+                    },
+                    "url": {
+                      "raw": "{{zn_url}}",
+                      "host": [
+                        "{{zn_url}}"
+                      ]
                     }
                   },
                   "response": []
@@ -22325,12 +21924,6 @@
                         "value": "application/json"
                       }
                     ],
-                    "url": {
-                      "raw": "{{zn_url}}",
-                      "host": [
-                        "{{zn_url}}"
-                      ]
-                    },
                     "body": {
                       "mode": "raw",
                       "raw": "{\n    \"status\": \"definitief\"\n}",
@@ -22339,6 +21932,12 @@
                           "language": "json"
                         }
                       }
+                    },
+                    "url": {
+                      "raw": "{{zn_url}}",
+                      "host": [
+                        "{{zn_url}}"
+                      ]
                     }
                   },
                   "response": []
@@ -22374,12 +21973,6 @@
                         "value": "application/json"
                       }
                     ],
-                    "url": {
-                      "raw": "{{zn_url}}",
-                      "host": [
-                        "{{zn_url}}"
-                      ]
-                    },
                     "body": {
                       "mode": "raw",
                       "raw": "{\n    \"tekst\": \"Mag niet meer\"\n}",
@@ -22388,6 +21981,12 @@
                           "language": "json"
                         }
                       }
+                    },
+                    "url": {
+                      "raw": "{{zn_url}}",
+                      "host": [
+                        "{{zn_url}}"
+                      ]
                     }
                   },
                   "response": []
@@ -22447,6 +22046,9 @@
                     }
                   ],
                   "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
                     "method": "DELETE",
                     "header": [
                       {
@@ -22463,9 +22065,6 @@
                       "host": [
                         "{{zn_min_url}}"
                       ]
-                    },
-                    "auth": {
-                      "type": "noauth"
                     }
                   },
                   "response": []
@@ -22740,6 +22339,602 @@
                   "response": []
                 }
               ]
+            },
+            {
+              "name": "ZRC zaak expand",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Expand 3\", function () {\r\n    pm.response.to.have.status(200);\r\n});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Proxy-Authorization",
+                    "value": "",
+                    "disabled": true
+                  },
+                  {
+                    "key": "Accept-Crs",
+                    "value": "EPSG:4326"
+                  },
+                  {
+                    "key": "Api-version",
+                    "value": "1.7.0"
+                  }
+                ],
+                "url": {
+                  "raw": "{{zaak_url2}}?expand=selectielijstklasse",
+                  "host": [
+                    "{{zaak_url2}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "identificatie",
+                      "value": "https://catalogi-mega1.mega.local/api/v1/zaaktypen/9d0d3caa-6eb2-421a-8b22-80505ccf985e",
+                      "disabled": true
+                    },
+                    {
+                      "key": "expand",
+                      "value": "rollen",
+                      "disabled": true
+                    },
+                    {
+                      "key": "expand",
+                      "value": "status",
+                      "disabled": true
+                    },
+                    {
+                      "key": "expand",
+                      "value": "zaaktype",
+                      "disabled": true
+                    },
+                    {
+                      "key": "expand",
+                      "value": "hoofdzaak",
+                      "disabled": true
+                    },
+                    {
+                      "key": "expand",
+                      "value": "deelzaken",
+                      "disabled": true
+                    },
+                    {
+                      "key": "expand",
+                      "value": "zaakinformatieobjecten",
+                      "disabled": true
+                    },
+                    {
+                      "key": "expand",
+                      "value": "zaakobjecten",
+                      "disabled": true
+                    },
+                    {
+                      "key": "expand",
+                      "value": "resultaat.resultaattype",
+                      "disabled": true
+                    },
+                    {
+                      "key": "expand",
+                      "value": "relevanteAndereZaken,eigenschappen",
+                      "disabled": true
+                    },
+                    {
+                      "key": "expand",
+                      "value": "eigenschappen",
+                      "disabled": true
+                    },
+                    {
+                      "key": "expand",
+                      "value": "selectielijstklasse"
+                    },
+                    {
+                      "key": "expand",
+                      "value": "zaaktype.selectielijstprocestype ",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "ZRC zoek expand",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Filter zaak 1\", function () {\r\n    pm.response.to.have.status(200);\r\n    pm.expect(pm.response.json().count).to.be.above(0);\r\n});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Proxy-Authorization",
+                    "value": "",
+                    "disabled": true
+                  },
+                  {
+                    "key": "Accept-Crs",
+                    "value": "EPSG:4326"
+                  },
+                  {
+                    "key": "Content-Crs",
+                    "value": "EPSG:4326"
+                  },
+                  {
+                    "key": "Api-version",
+                    "value": "1.7"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"uuid__in\": [\r\n        \"{{zaak_uuid}}\"\r\n    ],\r\n    \"fields\": [\r\n        \"identificatie\",\r\n        {\r\n            \"zaakinformatieobjecten\": [\r\n                {\r\n                    \"informatieobject\": [\r\n                        {\r\n                            \"informatieobjecttype\": [\r\n                                \"omschrijving\"\r\n                            ]\r\n                        }\r\n                    ]\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{zrc_url}}/zaken/_zoek",
+                  "host": [
+                    "{{zrc_url}}"
+                  ],
+                  "path": [
+                    "zaken",
+                    "_zoek"
+                  ],
+                  "query": [
+                    {
+                      "key": "identificatie",
+                      "value": "{{zaak_identificatie}}",
+                      "disabled": true
+                    },
+                    {
+                      "key": "bronorganisatie",
+                      "value": "{{rsin}}",
+                      "disabled": true
+                    },
+                    {
+                      "key": "bronorganisatie__in",
+                      "value": "{{rsin}},123443210",
+                      "disabled": true
+                    },
+                    {
+                      "key": "zaaktype",
+                      "value": "{{zaaktype}}",
+                      "disabled": true
+                    },
+                    {
+                      "key": "archiefnominatie",
+                      "value": "blijvend_bewaren",
+                      "disabled": true
+                    },
+                    {
+                      "key": "archiefnominatie__in",
+                      "value": "blijvend_bewaren,vernietigen",
+                      "disabled": true
+                    },
+                    {
+                      "key": "archiefactiedatum",
+                      "value": "2031-06-09",
+                      "disabled": true
+                    },
+                    {
+                      "key": "archiefactiedatum__isnull",
+                      "value": "true",
+                      "disabled": true
+                    },
+                    {
+                      "key": "archiefactiedatum__lt",
+                      "value": "2031-06-09",
+                      "disabled": true
+                    },
+                    {
+                      "key": "archiefactiedatum__gt",
+                      "value": "2031-06-09",
+                      "disabled": true
+                    },
+                    {
+                      "key": "archiefstatus",
+                      "value": "gearchiveerd",
+                      "disabled": true
+                    },
+                    {
+                      "key": "archiefstatus__in",
+                      "value": "gearchiveerd,overgedragen",
+                      "disabled": true
+                    },
+                    {
+                      "key": "startdatum",
+                      "value": "2023-07-19",
+                      "disabled": true
+                    },
+                    {
+                      "key": "startdatum__gt",
+                      "value": "2023-07-19",
+                      "disabled": true
+                    },
+                    {
+                      "key": "startdatum__gte",
+                      "value": "2023-07-19",
+                      "disabled": true
+                    },
+                    {
+                      "key": "startdatum__lt",
+                      "value": "2023-07-19",
+                      "disabled": true
+                    },
+                    {
+                      "key": "startdatum__lte",
+                      "value": "2023-07-19",
+                      "disabled": true
+                    },
+                    {
+                      "key": "registratiedatum",
+                      "value": "2023-07-19",
+                      "disabled": true
+                    },
+                    {
+                      "key": "registratiedatum__gt",
+                      "value": "2023-07-19",
+                      "disabled": true
+                    },
+                    {
+                      "key": "registratiedatum__lt",
+                      "value": "2023-07-19",
+                      "disabled": true
+                    },
+                    {
+                      "key": "einddatum",
+                      "value": "2024-01-16",
+                      "disabled": true
+                    },
+                    {
+                      "key": "einddatum__isnull",
+                      "value": "true",
+                      "disabled": true
+                    },
+                    {
+                      "key": "einddatum__lt",
+                      "value": "2024-01-16",
+                      "disabled": true
+                    },
+                    {
+                      "key": "einddatum__gt",
+                      "value": "2024-01-16",
+                      "disabled": true
+                    },
+                    {
+                      "key": "einddatumGepland",
+                      "value": "2019-04-20",
+                      "disabled": true
+                    },
+                    {
+                      "key": "einddatumGepland__lt",
+                      "value": "2019-04-20",
+                      "disabled": true
+                    },
+                    {
+                      "key": "einddatumGepland__gt",
+                      "value": "2019-04-20",
+                      "disabled": true
+                    },
+                    {
+                      "key": "uiterlijkeEinddatumAfdoening",
+                      "value": "2019-04-09",
+                      "disabled": true
+                    },
+                    {
+                      "key": "uiterlijkeEinddatumAfdoening__gt",
+                      "value": "2019-04-09",
+                      "disabled": true
+                    },
+                    {
+                      "key": "uiterlijkeEinddatumAfdoening__lt",
+                      "value": "2019-04-09",
+                      "disabled": true
+                    },
+                    {
+                      "key": "rol__betrokkeneType",
+                      "value": "natuurlijk_persoon",
+                      "disabled": true
+                    },
+                    {
+                      "key": "rol__betrokkene",
+                      "value": "{{rol_url}}",
+                      "disabled": true
+                    },
+                    {
+                      "key": "rol__omschrijvingGeneriek",
+                      "value": "belanghebbende",
+                      "disabled": true
+                    },
+                    {
+                      "key": "maximaleVertrouwelijkheidaanduiding",
+                      "value": "intern",
+                      "disabled": true
+                    },
+                    {
+                      "key": "rol__betrokkeneIdentificatie__natuurlijkPersoon__inpBsn",
+                      "value": "{{inpBsn}}",
+                      "disabled": true
+                    },
+                    {
+                      "key": "rol__betrokkeneIdentificatie__natuurlijkPersoon__anpIdentificatie",
+                      "value": "{{anpIdentificatie}}",
+                      "disabled": true
+                    },
+                    {
+                      "key": "rol__betrokkeneIdentificatie__natuurlijkPersoon__inpA_nummer",
+                      "value": "{{inpA_nummer}}",
+                      "disabled": true
+                    },
+                    {
+                      "key": "rol__betrokkeneIdentificatie__nietNatuurlijkPersoon__annIdentificatie",
+                      "value": "{{annIdentificatie}}",
+                      "disabled": true
+                    },
+                    {
+                      "key": "rol__betrokkeneIdentificatie__nietNatuurlijkPersoon__innNnpId",
+                      "value": "{{innNnpId}}",
+                      "disabled": true
+                    },
+                    {
+                      "key": "rol__betrokkeneIdentificatie__vestiging__vestigingsNummer",
+                      "value": "{{vestigingsNummer}}",
+                      "disabled": true
+                    },
+                    {
+                      "key": "rol__betrokkeneIdentificatie__medewerker__identificatie",
+                      "value": "{{MDWidentificatie}}",
+                      "disabled": true
+                    },
+                    {
+                      "key": "rol__betrokkeneIdentificatie__organisatorischeEenheid__identificatie",
+                      "value": "{{OEHidentifiicatie}}",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "ZRC zoek expand selectielijstProcestype naam",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Zoek met fields: zaak.zaaktype.selectielijstProcestype.naam\", function () {\n    pm.response.to.have.status(200);\n    const b = pm.response.json();\n    pm.expect(b.count).to.be.above(0);\n    const zaaktype = b.results[0]._expand.zaaktype;\n    const procestype = zaaktype._expand.selectielijstProcestype;\n    pm.expect(procestype.naam).to.be.a('string').and.not.empty;\n});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept-Crs",
+                    "value": "EPSG:4326"
+                  },
+                  {
+                    "key": "Content-Crs",
+                    "value": "EPSG:4326"
+                  },
+                  {
+                    "key": "Api-version",
+                    "value": "1.7",
+                    "disabled": true
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"uuid__in\": [\n        \"{{zaak_uuid}}\"\n    ],\n    \"fields\": [\n        \"identificatie\",\n        {\n            \"zaaktype\": [\n                {\n                    \"selectielijstProcestype\": [\n                        \"*\"\n                    ]\n                }\n            ]\n        }\n    ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{zrc_url}}/zaken/_zoek",
+                  "host": [
+                    "{{zrc_url}}"
+                  ],
+                  "path": [
+                    "zaken",
+                    "_zoek"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "ZRC zoek expand selectielijstklasse volledigNummer",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "// zaak uit ZGW 1.5 / ZRC zaak zoekopties, deze heeft een resultaat\npm.environment.set(\"zaak_zoeken_uuid\", pm.environment.get(\"zaak_zoeken_url\").split(\"/\").pop());"
+                    ]
+                  }
+                },
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Zoek met fields: zaak.resultaat.resultaattype.selectielijstklasse.volledigNummer\", function () {\n    pm.response.to.have.status(200);\n    const b = pm.response.json();\n    pm.expect(b.count).to.be.above(0);\n    const resultaattype = b.results[0]._expand.resultaat._expand.resultaattype;\n    const klasse = resultaattype._expand.selectielijstklasse;\n    pm.expect(klasse.volledigNummer).to.be.a(\"string\").and.not.empty;\n});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept-Crs",
+                    "value": "EPSG:4326"
+                  },
+                  {
+                    "key": "Content-Crs",
+                    "value": "EPSG:4326"
+                  },
+                  {
+                    "key": "Api-version",
+                    "value": "1.7"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"uuid__in\": [\n        \"{{zaak_zoeken_uuid}}\"\n    ],\n    \"fields\": [\n        \"identificatie\",\n        {\n            \"resultaat\": [\n                {\n                    \"resultaattype\": [\n                        {\n                            \"selectielijstklasse\": [\n                                \"*\"\n                            ]\n                        }\n                    ]\n                }\n            ]\n        }\n    ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{zrc_url}}/zaken/_zoek",
+                  "host": [
+                    "{{zrc_url}}"
+                  ],
+                  "path": [
+                    "zaken",
+                    "_zoek"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "ZRC voeg rol met medewerker  toe aan deze zaak",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Medewerker can have large identification (at least a guid)\", function () {\r\n    pm.response.to.have.status(201);\r\n});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Proxy-Authorization",
+                    "value": "",
+                    "disabled": true
+                  },
+                  {
+                    "key": "Accept-Crs",
+                    "value": "EPSG:4326"
+                  },
+                  {
+                    "key": "Content-Crs",
+                    "value": "EPSG:4326"
+                  },
+                  {
+                    "key": "api-version",
+                    "value": "1.7.0",
+                    "disabled": true
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"zaak\": \"{{zaak_url}}\",\r\n    \"betrokkene\": \"http://example.com\",\r\n    \"betrokkeneType\": \"medewerker\",\r\n    \"afwijkendeNaamBetrokkene\": \"string\",\r\n    \"roltype\": \"{{roltype}}\",\r\n    \"roltoelichting\": \"string\",\r\n    \"indicatieMachtiging\": \"gemachtigde\",\r\n    \"contactpersoonRol\": {\r\n        \"emailadres\": \"user@example.com\",\r\n        \"functie\": \"string\",\r\n        \"telefoonnummer\": \"string\",\r\n        \"naam\": \"string\"\r\n    },\r\n    \"betrokkeneIdentificatie\": {\r\n        \"identificatie\": \"96d2cc7b-7bd6-490f-9a37-791b80ef9d48\",\r\n        \"achternaam\": \"string\",\r\n        \"voorletters\": \"string\",\r\n        \"voorvoegselAchternaam\": \"string\"\r\n    }\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{zrc_url}}/rollen",
+                  "host": [
+                    "{{zrc_url}}"
+                  ],
+                  "path": [
+                    "rollen"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "ZRC reserveer zaaknummer",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test(\"Prep 5\", function () {\r\n    pm.response.to.have.status(201);\r\n});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Proxy-Authorization",
+                    "value": "",
+                    "disabled": true
+                  },
+                  {
+                    "key": "Accept-Crs",
+                    "value": "EPSG:4326"
+                  },
+                  {
+                    "key": "Content-Crs",
+                    "value": "EPSG:4326"
+                  },
+                  {
+                    "key": "api-version",
+                    "value": "1.7.0"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"bronorganisatie\": \"809266660\",\r\n  \"aantal\": 10\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{zrc_url}}/zaaknummer_reserveren",
+                  "host": [
+                    "{{zrc_url}}"
+                  ],
+                  "path": [
+                    "zaaknummer_reserveren"
+                  ]
+                }
+              },
+              "response": []
             }
           ]
         },
@@ -23039,6 +23234,80 @@
               "response": []
             },
             {
+              "name": "statustype",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.environment.set(\"statustypex\", pm.response.json().url);\r\npm.test(\"Prep 2\", function () {\r\n    pm.response.to.have.status(201);\r\n});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"omschrijving\": \"O{{timestamp}}\",\r\n    \"omschrijvingGeneriek\": \"string\",\r\n    \"statustekst\": \"dit is de status\",\r\n    \"zaaktype\": \"{{zaaktype}}\",\r\n    \"volgnummer\": 1,\r\n    \"informeren\": true,\r\n    \"doorlooptijd\": \"P12D\",\r\n    \"toelichting\": \"dit is de toelichting    \",\r\n    \"checklistitemStatustype\": [\r\n        {\r\n            \"itemnaam\": \"string\",\r\n            \"toelichting\": \"string\",\r\n            \"vraagstelling\": \"string\",\r\n            \"verplicht\": true\r\n        },\r\n        {\r\n            \"itemnaam\": \"string2\",\r\n            \"toelichting\": \"string2\",\r\n            \"vraagstelling\": \"string2\",\r\n            \"verplicht\": false\r\n        }\r\n    ],\r\n    \"eigenschappen\": [\r\n        \"{{eigenschap1}}\",\r\n        \"{{eigenschap2}}\"\r\n    ],\r\n    \"beginGeldigheid\": \"{{beginGeldigheid}}\",\r\n    \"eindeGeldigheid\": \"{{eindeGeldigheid}}\",\r\n    \"beginObject\": \"{{beginGeldigheid}}\",\r\n    \"eindeObject\": \"{{eindeGeldigheid}}\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{ztc_url}}/statustypen",
+                  "host": [
+                    "{{ztc_url}}"
+                  ],
+                  "path": [
+                    "statustypen"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "eindstatustype",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      ""
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"omschrijving\": \"O{{timestamp}}\",\r\n    \"omschrijvingGeneriek\": \"string\",\r\n    \"statustekst\": \"dit is de eindstatus\",\r\n    \"zaaktype\": \"{{zaaktype}}\",\r\n    \"volgnummer\": 10,\r\n    \"informeren\": true,\r\n    \"doorlooptijd\": \"P12D\",\r\n    \"toelichting\": \"dit is de toelichting    \",\r\n    \"checklistitemStatustype\": [\r\n        {\r\n            \"itemnaam\": \"string\",\r\n            \"toelichting\": \"string\",\r\n            \"vraagstelling\": \"string\",\r\n            \"verplicht\": true\r\n        },\r\n        {\r\n            \"itemnaam\": \"string2\",\r\n            \"toelichting\": \"string2\",\r\n            \"vraagstelling\": \"string2\",\r\n            \"verplicht\": false\r\n        }\r\n    ],\r\n    \"eigenschappen\": [\r\n        \"{{eigenschap1}}\",\r\n        \"{{eigenschap2}}\"\r\n    ],\r\n    \"beginGeldigheid\": \"{{beginGeldigheid}}\",\r\n    \"eindeGeldigheid\": \"{{eindeGeldigheid}}\",\r\n    \"beginObject\": \"{{beginGeldigheid}}\",\r\n    \"eindeObject\": \"{{eindeGeldigheid}}\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{ztc_url}}/statustypen",
+                  "host": [
+                    "{{ztc_url}}"
+                  ],
+                  "path": [
+                    "statustypen"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
               "name": "relateer IOT aan ZT",
               "event": [
                 {
@@ -23177,6 +23446,57 @@
                   ],
                   "path": [
                     "zaken"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "ZRC voeg status toe aan deze zaak",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.environment.set(\"status_url\", pm.response.json().url);\r\npm.test(\"Zaak aanmaken met valide gegevens geeft 201\", function() {\r\n    pm.response.to.have.status(201);\r\n});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Proxy-Authorization",
+                    "value": "",
+                    "disabled": true
+                  },
+                  {
+                    "key": "Accept-Crs",
+                    "value": "EPSG:4326"
+                  },
+                  {
+                    "key": "Content-Crs",
+                    "value": "EPSG:4326"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"zaak\": \"{{zaak_url}}\",\r\n    \"statustype\": \"{{statustypex}}\",\r\n    \"datumStatusGezet\": \"2025-12-22T10:44:46.5000576Z\",\r\n    \"statusToelichting\": \"Faseovergang naar Registreerbaarheid toetsen - status: Geaccepteerd\",\r\n    \"gezetdoor\": \"https://deburgermeester.van.eengemeente.nl\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{zrc_url}}/statussen",
+                  "host": [
+                    "{{zrc_url}}"
+                  ],
+                  "path": [
+                    "statussen"
                   ]
                 }
               },
