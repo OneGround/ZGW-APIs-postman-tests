@@ -1,10 +1,10 @@
 {
   "info": {
-    "_postman_id": "db0892eb-a8f9-4ce1-bf00-d427feade612",
+    "_postman_id": "ebe52197-06ae-4069-ad08-cfb46cb8dd33",
     "name": "ZGW features",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "30715320",
-    "_collection_link": "https://go.postman.co/collection/30715320-db0892eb-a8f9-4ce1-bf00-d427feade612?source=collection_link"
+    "_collection_link": "https://go.postman.co/collection/30715320-ebe52197-06ae-4069-ad08-cfb46cb8dd33?source=collection_link"
   },
   "item": [
     {
@@ -10161,6 +10161,57 @@
                           "key": "rol__betrokkene",
                           "value": "http://example.com"
                         }
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "ZRC voeg rol belanghebbende toe aan zaak voor zoeken",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                          "pm.test(\"Prep rol belanghebbende\", function () {\r\n    pm.response.to.have.status(201);\r\n});"
+                        ]
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Proxy-Authorization",
+                        "value": "",
+                        "disabled": true
+                      },
+                      {
+                        "key": "Accept-Crs",
+                        "value": "EPSG:4326"
+                      },
+                      {
+                        "key": "Content-Crs",
+                        "value": "EPSG:4326"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n    \"zaak\": \"{{zaak_zoeken_url}}\",\r\n    \"betrokkene\": \"http://example.com\",\r\n    \"betrokkeneType\": \"natuurlijk_persoon\",\r\n    \"roltype\": \"{{roltype_belanghebbende}}\",\r\n    \"roltoelichting\": \"Postman test belanghebbende\",\r\n    \"betrokkeneIdentificatie\": {\r\n        \"inpBsn\": \"{{inpBsn}}\",\r\n        \"achternaam\": \"string\",\r\n        \"voorletters\": \"string\"\r\n    }\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{zrc_url}}/rollen",
+                      "host": [
+                        "{{zrc_url}}"
+                      ],
+                      "path": [
+                        "rollen"
                       ]
                     }
                   },
